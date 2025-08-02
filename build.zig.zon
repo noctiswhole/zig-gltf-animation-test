@@ -52,6 +52,10 @@
             .url = "git+https://github.com/zig-gamedev/zmath#05799b336d4eb315cd5a5e5693a5704ba01db36c",
             .hash = "zmath-0.11.0-dev-wjwivdErAwA9JvOksjectxgnDUZumDR1V9DwKy5UeTOT",
         },
+        .cimgui = .{
+            .url = "git+https://github.com/floooh/dcimgui#3b98e0a57fc17cc72fdda6934bd932426778a16e",
+            .hash = "cimgui-0.1.0-44ClkczdkgCE9Z_0ehliUmEJjg-bjQVy1r55RQPw9N10",
+        },
     },
     .paths = .{
         "build.zig",

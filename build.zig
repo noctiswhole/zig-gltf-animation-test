@@ -78,6 +78,9 @@ pub fn build(b: *std.Build) void {
     
     const zmath = b.dependency("zmath", .{});
     exe.root_module.addImport("zmath", zmath.module("root"));
+
+    const cimgui = b.dependency("cimgui", .{});
+    exe.root_module.addImport("cimgui", cimgui.module("cimgui"));
     
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
