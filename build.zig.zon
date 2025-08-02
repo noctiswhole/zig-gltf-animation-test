@@ -48,6 +48,10 @@
             .url = "git+https://github.com/kooparse/zgltf#9c82e04aa0ff9418a29a588573b4aa5f83195fc6",
             .hash = "zgltf-0.1.0-sX6QAt0TAgDvPeZcAjqLu4ANd3QSaOx3QDsssykcLYiC",
         },
+        .zmath = .{
+            .url = "git+https://github.com/zig-gamedev/zmath#05799b336d4eb315cd5a5e5693a5704ba01db36c",
+            .hash = "zmath-0.11.0-dev-wjwivdErAwA9JvOksjectxgnDUZumDR1V9DwKy5UeTOT",
+        },
     },
     .paths = .{
         "build.zig",
