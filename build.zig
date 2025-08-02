@@ -66,6 +66,10 @@ pub fn build(b: *std.Build) void {
     });
     exe.root_module.addImport("sdl3", sdl3.module("sdl3"));
 
+    exe.root_module.addImport("gl", b.createModule(.{
+        .root_source_file = .{ .cwd_relative = "vendor/gl/gl4_6.zig"}
+    }));
+
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
     // step when running `zig build`).
