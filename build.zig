@@ -73,6 +73,8 @@ pub fn build(b: *std.Build) void {
     const zstbi = b.dependency("zstbi", .{});
     exe.root_module.addImport("zstbi", zstbi.module("root"));
 
+    const zgltf = b.dependency("zgltf", .{});
+    exe.root_module.addImport("zgltf", zgltf.module("zgltf"));
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
     // step when running `zig build`).
