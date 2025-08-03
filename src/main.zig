@@ -6,45 +6,73 @@ const fps = 60;
 const screen_width = 640;
 const screen_height = 480;
 
+// Disable main hack.
+pub const _start = void;
+pub const WinMainCRTStartup = void;
+/// Allocator we will use.
+const allocator = std.heap.smp_allocator;
+comptime {
+    _ = sdl3.main_callbacks;
+}
 
+const AppState = struct {
+    frame_capper: sdl3.extras.FramerateCapper(f32),
+    window: Window,
+};
 
-pub fn main() !void {
-    var window: Window = try Window.init("Hello SDL!", 640, 480);
-    defer window.deinit() catch {
-        @panic("Could not destroy window");
+pub fn init(
+    app_state: *?*AppState,
+    args: [][*:0]u8,
+) !sdl3.AppResult {
+    _ = args;
+    var window = try Window.init("Hello SDL", 640, 480);
+    errdefer window.deinit() catch {
+        @panic("could not destroy window");
     };
-    // Useful for limiting the FPS and getting the delta time.
-    var fps_capper = sdl3.extras.FramerateCapper(f32){ .mode = .{ .limited = fps } };
+    const frame_capper = sdl3.extras.FramerateCapper(f32){ .mode = .{ .unlimited = {} } };
 
-    while (true) {
+    const state = try allocator.create(AppState);
+    errdefer allocator.destroy(state);
+    state.* = .{
+        .window = window,
+        .frame_capper = frame_capper,
+    };
+    app_state.* = state;
+    return .run;
+}
 
-        // Delay to limit the FPS, returned delta time not needed.
-        const dt = fps_capper.delay();
-        _ = dt;
-
-        // Update logic.
-        // const surface = try window.getSurface();
-        // // try surface.fillRect(null, surface.mapRgb(128, 30, 255));
-        // try surface.clear(.{
-        //     .a = 0,
-        //     .r = 1,
-        //     .g = 1,
-        //     .b = 1,
-        // });
-        // zgl.clearColor(1, 1, 1, 1);
-        // zgl.clear(.{
-        //     .color = true,
-        // });
-        gl.clearColor(1, 1, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        try window.swap();
-        //
-        // Event logic.
-        if (sdl3.events.poll()) |event|
-            switch (event) {
-                .quit => break,
-                .terminating => break,
-                else => {},
-            };
+pub fn event(
+    app_state: *AppState,
+    curr_event: sdl3.events.Event,
+) !sdl3.AppResult {
+    _ = app_state;
+    switch (curr_event) {
+        .terminating => return .success,
+        .quit => return .success,
+        else => {},
     }
+    return .run;
+}
+
+pub fn quit(
+    app_state: ?*AppState,
+    result: sdl3.AppResult,
+) void {
+    _ = result;
+    if (app_state) |state| {
+        state.window.deinit() catch {
+            @panic("Could not destroy window");
+        };
+        allocator.destroy(state);
+    }
+}
+
+pub fn iterate(app_state: *AppState) !sdl3.AppResult {
+    const dt = app_state.frame_capper.delay();
+    _ = dt;
+
+    gl.clearColor(1, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    try app_state.window.swap();
+    return .run;
 }

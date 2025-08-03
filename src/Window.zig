@@ -46,8 +46,6 @@ pub fn init(window_title: [:0]const u8, screen_width: usize, screen_height: usiz
 
 pub fn deinit(self: *Window) !void {
     self.window.deinit();
-    sdl3.quit(SDL_INIT_FLAGS);
-    sdl3.shutdown();
     try self.context.deinit();
 }
 
