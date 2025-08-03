@@ -2,10 +2,6 @@ const Window = @This();
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 
-const WindowOptions = struct {
-    width: u32,
-};
-
 const SDL_INIT_FLAGS = sdl3.InitFlags{
     .video = true,
     .events = true,
@@ -33,6 +29,7 @@ pub fn init(window_title: [:0]const u8, screen_width: usize, screen_height: usiz
     // Initial window setup.
     const window = try sdl3.video.Window.init(window_title, screen_width, screen_height, .{
         .open_gl = true,
+        .resizable = true,
     });
 
     const context = try sdl3.video.gl.Context.init(window);
