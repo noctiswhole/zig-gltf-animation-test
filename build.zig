@@ -38,7 +38,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
 
         // Lib options.
-        // .callbacks = false,
+        .callbacks = true,
         // .ext_image = false,
 
         // Options passed directly to https://github.com/castholm/SDL (SDL3 C Bindings):
