@@ -71,8 +71,10 @@ pub fn iterate(app_state: *AppState) !sdl3.AppResult {
     const dt = app_state.frame_capper.delay();
     _ = dt;
 
-    gl.clearColor(1, 1, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    try app_state.window.swap();
+
+    app_state.window.main_loop() catch {
+        // TODO: handle error logging or something
+        @panic("Something something");
+    };
     return .run;
 }
