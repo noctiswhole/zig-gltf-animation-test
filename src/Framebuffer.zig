@@ -12,26 +12,11 @@ pub fn init(width: usize, height: usize) !Framebuffer {
     gl.genFramebuffers(1, &frame_buffer);
     gl.bindFramebuffer(gl.FRAMEBUFFER, frame_buffer);
 
-    var color_texture: gl.GLuint = 0;
-
-    gl.genTextures(1, &color_texture);
-    gl.bindTexture(gl.TEXTURE_2D, color_texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, @intCast(width), @intCast(height), 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, 0);
-
+    const color_texture = create_color_texture(width, height);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, color_texture, 0);
 
-    var depth_buffer: gl.GLuint = 0;
-    gl.genRenderbuffers(1, &depth_buffer);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, depth_buffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH24_STENCIL8, @intCast(width), @intCast(height));
+    const depth_buffer: gl.GLuint = create_depth_stencil_buffer(width, height);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, depth_buffer);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, 0);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
 
@@ -47,6 +32,29 @@ pub fn init(width: usize, height: usize) !Framebuffer {
         .color_texture = color_texture,
         .depth_buffer = depth_buffer,
     };
+}
+
+inline fn create_color_texture(width: usize, height: usize) gl.GLuint {
+    var color_texture: gl.GLuint = 0;
+    gl.genTextures(1, &color_texture);
+    gl.bindTexture(gl.TEXTURE_2D, color_texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, @intCast(width), @intCast(height), 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, 0);
+    return color_texture;
+}
+
+inline fn create_depth_stencil_buffer(width: usize, height: usize) gl.GLuint {
+    var depth_buffer: gl.GLuint = 0;
+    gl.genRenderbuffers(1, &depth_buffer);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depth_buffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH24_STENCIL8, @intCast(width), @intCast(height));
+    gl.bindRenderbuffer(gl.RENDERBUFFER, 0);
+    return depth_buffer;
 }
 
 pub fn bind(self: Framebuffer) void {
