@@ -58,5 +58,12 @@ pub fn texture_from_file(filename: [:0]const u8) !Texture {
     return .{
         .texture = texture,
     };
+}
 
+pub fn bind(self: Texture) void {
+    gl.bindTexture(gl.TEXTURE_2D, self.texture);
+}
+
+pub fn unbind(_: Texture) void {
+    gl.bindTexture(gl.TEXTURE_2D, 0);
 }
