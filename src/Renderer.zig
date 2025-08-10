@@ -1,19 +1,24 @@
 const Renderer = @This();
 const Framebuffer = @import("Framebuffer.zig");
+const Texture = @import("Texture.zig");
 const gl = @import("gl");
 framebuffer: Framebuffer,
+texture: Texture,
 
 pub fn init(width: usize, height: usize) !Renderer {
     // _ = width;
     // _ = height;
     const framebuffer = try Framebuffer.init(width, height);
+    const texture = try Texture.texture_from_file("resources/crate.png");
     return .{
         .framebuffer = framebuffer,
+        .texture = texture,
     };
 }
 
 pub fn deinit(self: Renderer) void {
     // _ = self;
+    self.texture.deinit();
     self.framebuffer.deinit();
 
 }

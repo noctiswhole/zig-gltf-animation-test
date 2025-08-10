@@ -39,7 +39,7 @@ pub fn build(b: *std.Build) void {
 
         // Lib options.
         .callbacks = true,
-        // .ext_image = false,
+        .ext_image = true,
 
         // Options passed directly to https://github.com/castholm/SDL (SDL3 C Bindings):
         // .c_sdl_preferred_linkage = .static,
@@ -52,10 +52,10 @@ pub fn build(b: *std.Build) void {
         // Options if `ext_image` is enabled:
         // .image_enable_bmp = true,
         // .image_enable_gif = true,
-        // .image_enable_jpg = true,
+        .image_enable_jpg = true,
         // .image_enable_lbm = true,
         // .image_enable_pcx = true,
-        // .image_enable_png = true,
+        .image_enable_png = true,
         // .image_enable_pnm = true,
         // .image_enable_qoi = true,
         // .image_enable_svg = true,
