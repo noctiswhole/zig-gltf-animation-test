@@ -33,7 +33,6 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
 }
 
 pub fn deinit(self: *Renderer) void {
-    // _ = self;
     self.texture.deinit();
     self.shader.deinit();
     self.framebuffer.deinit();
