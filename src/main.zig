@@ -73,8 +73,7 @@ pub fn iterate(app_state: *AppState) !sdl3.AppResult {
 
 
     app_state.window.main_loop() catch {
-        // TODO: handle error logging or something
-        @panic("Something something");
+        @panic("Main loop error");
     };
     return .run;
 }

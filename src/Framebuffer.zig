@@ -21,8 +21,7 @@ pub fn init(width: usize, height: usize) !Framebuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
 
     if (!check_complete(frame_buffer)) {
-        @panic("Could not create buffer");
-        // TODO: error
+        return error.FramebufferCreateFailed;
     }
 
     return .{
