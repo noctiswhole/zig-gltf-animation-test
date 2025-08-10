@@ -40,7 +40,7 @@ pub fn texture_from_file(filename: [:0]const u8) !Texture {
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,
-                internal_format,
+                gl.SRGB8_ALPHA8,
                 @intCast(surface.getWidth()),
                 @intCast(surface.getHeight()),
                 0,
