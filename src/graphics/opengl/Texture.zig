@@ -11,6 +11,7 @@ pub fn deinit(self: Texture) void {
 pub fn texture_from_file(filename: [:0]const u8) !Texture {
     const surface = try sdl3.image.loadFile(filename);
     defer surface.deinit();
+    try surface.flip(.{ .vertical = true });
 
     var texture: gl.GLuint = undefined;
     gl.genTextures(1, &texture);
