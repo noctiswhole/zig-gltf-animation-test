@@ -48,12 +48,20 @@ pub fn upload_data(self: *Renderer, mesh: Mesh) void {
 
 pub fn draw(self: Renderer) void {
     self.framebuffer.bind();
-    gl.clearColor(1, 1, 0, 1);
+    defer self.framebuffer.unbind();
+    gl.clearColor(0.1, 0.1, 0.1, 1);
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    self.framebuffer.unbind();
+    self.shader.use();
+    self.texture.bind();
+    defer self.texture.unbind();
+    self.vertex_buffer.bind();
+    defer self.vertex_buffer.unbind();
+
+    self.vertex_buffer.draw(gl.TRIANGLES, 0, self.triangle_count * 3);
+
     self.framebuffer.draw_to_screen();
 }

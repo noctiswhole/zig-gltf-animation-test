@@ -28,8 +28,8 @@ pub fn texture_from_file(filename: [:0]const u8) !Texture {
                 pixel_format = gl.RGBA;
             },
             .packed_abgr_8_8_8_8 => {
-                internal_format = gl.BGRA;
-                pixel_format = gl.BGRA;
+                internal_format = gl.RGBA;
+                pixel_format = gl.RGBA;
             },
             else => return error.UnsupportedSurfaceFormat,
         }

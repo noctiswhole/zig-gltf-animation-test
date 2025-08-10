@@ -4,7 +4,7 @@ const data = @import("../opengl/data.zig");
 const Mesh = data.Mesh;
 const Vertex = data.Vertex;
 
-vertex_data: Mesh,
+mesh: Mesh,
 
 pub fn init(allocator: std.mem.Allocator) !Model {
     var mesh: Mesh = .empty;
@@ -43,10 +43,10 @@ pub fn init(allocator: std.mem.Allocator) !Model {
     try mesh.appendSlice(allocator, &vertices);
 
     return .{
-        .vertex_data = mesh,
+        .mesh = mesh,
     };
 }
 
-pub fn deinit(self: Model, allocator: std.mem.Allocator) void {
-    self.vertex_data.deinit(allocator);
+pub fn deinit(self: *Model, allocator: std.mem.Allocator) void {
+    self.mesh.deinit(allocator);
 }

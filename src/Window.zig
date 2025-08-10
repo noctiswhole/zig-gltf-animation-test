@@ -40,8 +40,9 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
     var renderer = try Renderer.init(allocator, 640, 480);
 
     try sdl3.video.gl.setSwapInterval(.vsync);
-    const model: Model = try Model.init(allocator);
-    renderer.upload_data(model.vertex_data);
+    var model: Model = try Model.init(allocator);
+    defer model.deinit(allocator);
+    renderer.upload_data(model.mesh);
 
     return .{
         .window = window,
