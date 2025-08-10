@@ -1,7 +1,7 @@
 const Shader = @This();
 const gl = @import("gl");
 const std = @import("std");
-const File = @import("../io/File.zig");
+const File = @import("../../io/File.zig");
 
 shader: gl.GLuint,
 

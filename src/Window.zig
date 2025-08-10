@@ -1,5 +1,5 @@
 const Window = @This();
-const Renderer = @import("graphics/Renderer.zig");
+const Renderer = @import("graphics/opengl/Renderer.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
