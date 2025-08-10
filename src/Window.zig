@@ -1,7 +1,8 @@
 const Window = @This();
+const Renderer = @import("Renderer.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
-const Renderer = @import("Renderer.zig");
+const std = @import("std");
 
 const SDL_INIT_FLAGS = sdl3.InitFlags{
     .video = true,
@@ -17,7 +18,7 @@ window: sdl3.video.Window,
 context: sdl3.video.gl.Context,
 renderer: Renderer,
 
-pub fn init(window_title: [:0]const u8, screen_width: usize, screen_height: usize) !Window {
+pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_width: usize, screen_height: usize) !Window {
     // Initialize SDL with subsystems you need here.
 
     try sdl3.init(SDL_INIT_FLAGS);
@@ -35,7 +36,7 @@ pub fn init(window_title: [:0]const u8, screen_width: usize, screen_height: usiz
     const context = try sdl3.video.gl.Context.init(window);
 
     try gl.load(context, getProcAddress);
-    const renderer = try Renderer.init(640, 480);
+    const renderer = try Renderer.init(allocator, 640, 480);
     return .{
         .window = window,
         .context = context,

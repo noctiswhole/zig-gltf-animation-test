@@ -25,7 +25,7 @@ pub fn init(
     args: [][*:0]u8,
 ) !sdl3.AppResult {
     _ = args;
-    var window = try Window.init("Hello SDL", 640, 480);
+    var window = try Window.init(allocator, "Hello SDL", 640, 480);
     errdefer window.deinit() catch {
         @panic("could not destroy window");
     };
