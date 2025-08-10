@@ -2,6 +2,8 @@ const VertexBuffer = @This();
 const gl = @import("gl");
 const Vertex = @import("data.zig").Vertex;
 const Logger = @import("../../io/Logger.zig").makeLogger("VertexBuffer");
+const Mesh = @import("data.zig").Mesh;
+const std = @import("std");
 vao: gl.GLuint,
 vbo: gl.GLuint,
 
@@ -28,6 +30,28 @@ pub fn init() VertexBuffer {
         .vao = vao,
         .vbo = vbo,
     };
+}
+
+pub fn upload_data(self: VertexBuffer, mesh: Mesh) void {
+    gl.bindVertexArray(self.vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, self.vbo);
+
+    gl.bufferData(gl.ARRAY_BUFFER, @intCast(mesh.items.len), mesh.items.ptr, gl.DYNAMIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
+    gl.bindVertexArray(0);
+}
+
+pub fn bind(self: VertexBuffer) void {
+    gl.bindVertexArray(self.vao);
+}
+
+pub fn unbind(_: VertexBuffer) void {
+    gl.bindVertexArray(0);
+}
+
+pub fn draw(mode: gl.GLuint, start: usize, num: usize) void {
+    gl.drawArrays(mode, @intCast(start), @intCast(num));
 }
 
 pub fn deinit(self: VertexBuffer) void {

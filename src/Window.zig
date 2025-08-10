@@ -37,7 +37,7 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
     const context = try sdl3.video.gl.Context.init(window);
 
     try gl.load(context, getProcAddress);
-    const renderer = try Renderer.init(allocator, 640, 480);
+    var renderer = try Renderer.init(allocator, 640, 480);
 
     try sdl3.video.gl.setSwapInterval(.vsync);
     const model: Model = try Model.init(allocator);

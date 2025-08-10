@@ -11,6 +11,7 @@ framebuffer: Framebuffer,
 texture: Texture,
 shader: Shader,
 vertex_buffer: VertexBuffer,
+triangle_count: usize = 0,
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     // _ = width;
@@ -40,10 +41,9 @@ pub fn deinit(self: Renderer) void {
 
 }
 
-pub fn upload_data(self: Renderer, mesh: Mesh) void {
-    _ = self;
-    _ = mesh;
-
+pub fn upload_data(self: *Renderer, mesh: Mesh) void {
+    self.triangle_count = mesh.items.len / 3;
+    self.vertex_buffer.upload_data(mesh);
 }
 
 pub fn draw(self: Renderer) void {
