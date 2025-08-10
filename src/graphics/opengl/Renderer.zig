@@ -32,7 +32,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     };
 }
 
-pub fn deinit(self: Renderer) void {
+pub fn deinit(self: *Renderer) void {
     // _ = self;
     self.texture.deinit();
     self.shader.deinit();
@@ -44,6 +44,15 @@ pub fn deinit(self: Renderer) void {
 pub fn upload_data(self: *Renderer, mesh: Mesh) void {
     self.triangle_count = mesh.items.len / 3;
     self.vertex_buffer.upload_data(mesh);
+}
+
+pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
+    if (width == 0 or height == 0) {
+        return;
+    }
+
+    try self.framebuffer.resize(width, height);
+    gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
 pub fn draw(self: Renderer) void {

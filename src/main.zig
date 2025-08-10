@@ -45,10 +45,14 @@ pub fn event(
     app_state: *AppState,
     curr_event: sdl3.events.Event,
 ) !sdl3.AppResult {
-    _ = app_state;
     switch (curr_event) {
         .terminating => return .success,
         .quit => return .success,
+        .window_resized =>  {
+
+            try app_state.window.event_window_resized();
+            return .run;
+        },
         else => {},
     }
     return .run;

@@ -61,6 +61,11 @@ pub fn swap(self: Window) !void {
     try sdl3.video.gl.swapWindow(self.window);
 }
 
+pub fn event_window_resized(self: *Window) !void {
+    const size = try self.window.getSize();
+    try self.renderer.set_size(size.width, size.height);
+}
+
 pub fn main_loop(self: Window) !void {
     self.renderer.draw();
     try self.swap();

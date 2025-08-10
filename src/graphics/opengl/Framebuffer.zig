@@ -86,7 +86,22 @@ fn check_complete(frame_buffer: gl.GLuint) bool {
     return true;
 }
 
-pub fn deinit(self: Framebuffer) void {
+pub fn resize(self: *Framebuffer, width: usize, height: usize) !void {
+    self.buffer_width = width;
+    self.buffer_height = height;
+
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, 0);
+    gl.deleteTextures(1, &self.color_texture);
+    gl.deleteRenderbuffers(1, &self.depth_buffer);
+    gl.deleteFramebuffers(1, &self.frame_buffer);
+
+    const new_framebuffer = try init(width, height);
+    self.color_texture = new_framebuffer.color_texture;
+    self.depth_buffer = new_framebuffer.depth_buffer;
+    self.frame_buffer = new_framebuffer.frame_buffer;
+}
+
+pub fn deinit(self: *Framebuffer) void {
     self.unbind();
     gl.deleteTextures(1, &self.color_texture);
     gl.deleteRenderbuffers(1, &self.depth_buffer);
