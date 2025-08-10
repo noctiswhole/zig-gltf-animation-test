@@ -1,6 +1,7 @@
 const Framebuffer = @This();
 const gl = @import("gl");
-const sdl3 = @import("sdl3");
+const Logger = @import("../../io/Logger.zig").makeLogger("FrameBuffer");
+
 buffer_width: usize = 640,
 buffer_height: usize = 480,
 frame_buffer: gl.GLuint,
@@ -23,6 +24,8 @@ pub fn init(width: usize, height: usize) !Framebuffer {
     if (!check_complete(frame_buffer)) {
         return error.FramebufferCreateFailed;
     }
+
+    Logger.log("FrameBuffer initialized");
 
     return .{
         .buffer_width = width,

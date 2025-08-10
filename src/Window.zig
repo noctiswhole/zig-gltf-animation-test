@@ -1,5 +1,6 @@
 const Window = @This();
 const Renderer = @import("graphics/opengl/Renderer.zig");
+const Model = @import("graphics/model/Model.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
@@ -37,6 +38,11 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
 
     try gl.load(context, getProcAddress);
     const renderer = try Renderer.init(allocator, 640, 480);
+
+    try sdl3.video.gl.setSwapInterval(.vsync);
+    const model: Model = try Model.init(allocator);
+    renderer.upload_data(model.vertex_data);
+
     return .{
         .window = window,
         .context = context,
@@ -55,7 +61,6 @@ pub fn swap(self: Window) !void {
 }
 
 pub fn main_loop(self: Window) !void {
-    try sdl3.video.gl.setSwapInterval(.vsync);
     self.renderer.draw();
     try self.swap();
 }
