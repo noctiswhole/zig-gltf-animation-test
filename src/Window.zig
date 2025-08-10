@@ -55,7 +55,7 @@ pub fn swap(self: Window) !void {
 }
 
 pub fn main_loop(self: Window) !void {
-    try sdl3.video.gl.setSwapInterval(.synchronized);
+    try sdl3.video.gl.setSwapInterval(.vsync);
     self.renderer.draw();
     try self.swap();
 }
