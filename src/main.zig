@@ -53,6 +53,11 @@ pub fn event(
             try app_state.window.event_window_resized();
             return .run;
         },
+        .key_down => {
+            if (curr_event.key_down.key) |keycode| {
+                app_state.window.event_keyboard(keycode);
+            }
+        },
         else => {},
     }
     return .run;

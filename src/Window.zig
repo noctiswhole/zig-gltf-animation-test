@@ -1,6 +1,7 @@
 const Window = @This();
 const Renderer = @import("graphics/opengl/Renderer.zig");
 const Model = @import("graphics/model/Model.zig");
+const SDLKeymap = @import("io/SDLKeymap.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
@@ -64,6 +65,12 @@ pub fn swap(self: Window) !void {
 pub fn event_window_resized(self: *Window) !void {
     const size = try self.window.getSize();
     try self.renderer.set_size(size.width, size.height);
+}
+
+pub fn event_keyboard(_: Window, key_event: sdl3.keycode.Keycode) void {
+    if (SDLKeymap.get_event_from_sdl_keyboard(key_event) == .switch_shader) {
+        std.debug.print("We pressed space!", .{});
+    }
 }
 
 pub fn main_loop(self: Window) !void {
