@@ -68,7 +68,17 @@ pub fn unbind(_: Framebuffer) void {
 }
 
 pub fn draw_to_screen(self: Framebuffer) void {
-    gl.blitNamedFramebuffer(self.frame_buffer, 0, 0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), 0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), gl.COLOR_BUFFER_BIT, gl.NEAREST);
+    gl.blitNamedFramebuffer(
+        self.frame_buffer,
+        0, 0, 0,
+        @intCast(self.buffer_width),
+        @intCast(self.buffer_height),
+        0, 0,
+        @intCast(self.buffer_width),
+        @intCast(self.buffer_height),
+        gl.COLOR_BUFFER_BIT,
+        gl.NEAREST
+    );
 }
 
 fn check_complete(frame_buffer: gl.GLuint) bool {
@@ -83,10 +93,7 @@ pub fn resize(self: *Framebuffer, width: usize, height: usize) !void {
     self.buffer_width = width;
     self.buffer_height = height;
 
-    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, 0);
-    gl.deleteTextures(1, &self.color_texture);
-    gl.deleteRenderbuffers(1, &self.depth_buffer);
-    gl.deleteFramebuffers(1, &self.frame_buffer);
+    self.deinit();
 
     const new_framebuffer = try init(width, height);
     self.color_texture = new_framebuffer.color_texture;
