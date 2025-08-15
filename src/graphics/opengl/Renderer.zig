@@ -10,8 +10,10 @@ const gl = @import("gl");
 framebuffer: Framebuffer,
 texture: Texture,
 shader: Shader,
+shader_changed: Shader,
 vertex_buffer: VertexBuffer,
 triangle_count: usize = 0,
+is_shader_swap: bool = false,
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     // _ = width;
@@ -22,6 +24,8 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     Logger.log("Texture initialized");
     const shader = try Shader.init(allocator, "resources/shaders/basic.vert", "resources/shaders/basic.frag");
     Logger.log("Shader initialized");
+    const shader_changed = try Shader.init(allocator, "resources/shaders/changed.vert", "resources/shaders/changed.frag");
+    Logger.log("Shader2 initialized");
     const vertex_buffer = VertexBuffer.init();
     Logger.log("VertexBuffer initialized");
     return .{
@@ -29,6 +33,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .texture = texture,
         .shader = shader,
         .vertex_buffer = vertex_buffer,
+        .shader_changed = shader_changed,
     };
 }
 
@@ -63,7 +68,11 @@ pub fn draw(self: Renderer) void {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    self.shader.use();
+    if (self.is_shader_swap) {
+        self.shader_changed.use();
+    } else {
+        self.shader.use();
+    }
     self.texture.bind();
     defer self.texture.unbind();
     self.vertex_buffer.bind();
@@ -72,4 +81,8 @@ pub fn draw(self: Renderer) void {
     self.vertex_buffer.draw(gl.TRIANGLES, 0, self.triangle_count * 3);
 
     self.framebuffer.draw_to_screen();
+}
+
+pub fn shader_swap(self: *Renderer) void {
+    self.is_shader_swap = !self.is_shader_swap;
 }

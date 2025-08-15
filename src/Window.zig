@@ -67,10 +67,11 @@ pub fn event_window_resized(self: *Window) !void {
     try self.renderer.set_size(size.width, size.height);
 }
 
-pub fn event_keyboard(_: Window, key_event: sdl3.keycode.Keycode) void {
+pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
     if (SDLKeymap.get_event_from_sdl_keyboard(key_event)) |event| {
         if (event == .switch_shader) {
             std.debug.print("We pressed space!", .{});
+            self.renderer.shader_swap();
         }
     }
 }
