@@ -13,6 +13,7 @@ const zalgebra = @import("zalgebra");
 const Mat4 = zalgebra.Mat4;
 const Vec3 = zalgebra.Vec3;
 const math = std.math;
+
 framebuffer: Framebuffer,
 texture: Texture,
 shader: Shader,
