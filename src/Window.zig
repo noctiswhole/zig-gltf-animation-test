@@ -68,7 +68,7 @@ pub fn swap(self: Window) !void {
 }
 
 pub fn event_handle(self: *Window, event: sdl3.events.Event) void {
-    self.gui.event_handle(event);
+    _ = self.gui.event_handle(event);
     switch (event) {
         .key_down => {
             if (event.key_down.key) |keycode| {

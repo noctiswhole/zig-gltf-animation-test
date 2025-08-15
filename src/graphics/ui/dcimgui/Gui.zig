@@ -28,8 +28,8 @@ pub fn init(window: sdl3.video.Window, context: sdl3.video.gl.Context) !Gui {
     }
 }
 
-pub fn event_handle(_: *Gui, event: sdl3.events.Event) void {
-    _ = c.cImGui_ImplSDL3_ProcessEvent(@ptrCast(&sdl3.events.Event.toSdl(event)));
+pub fn event_handle(_: *Gui, event: sdl3.events.Event) bool {
+    return c.cImGui_ImplSDL3_ProcessEvent(@ptrCast(&sdl3.events.Event.toSdl(event)));
 }
 
 pub fn draw(_: *Gui) void {
