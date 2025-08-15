@@ -12,7 +12,7 @@ layout (std140, binding = 0) uniform Matrices {
 };
 
 void main() {
-  gl_Position = projection * vec4(aPos, 1.0);
+  gl_Position = projection * view * vec4(aPos, 1.0);
   texColor = vec4(aColor, 1.0);
   texCoord = aTexCoord;
 }
