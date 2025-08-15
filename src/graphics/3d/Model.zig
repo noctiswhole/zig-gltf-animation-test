@@ -1,6 +1,6 @@
 const Model = @This();
 const std = @import("std");
-const data = @import("../opengl/data.zig");
+const data = @import("data.zig");
 const Mesh = data.Mesh;
 const Vertex = data.Vertex;
 

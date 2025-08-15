@@ -1,8 +1,8 @@
 const VertexBuffer = @This();
 const gl = @import("gl");
-const Vertex = @import("data.zig").Vertex;
+const Vertex = @import("../3d/data.zig").Vertex;
 const Logger = @import("../../io/Logger.zig").makeLogger("VertexBuffer");
-const Mesh = @import("data.zig").Mesh;
+const Mesh = @import("../3d/data.zig").Mesh;
 const std = @import("std");
 vao: gl.GLuint,
 vbo: gl.GLuint,

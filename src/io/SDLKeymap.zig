@@ -9,10 +9,10 @@ const keymap = StaticStringMap.initComptime(.{
     .{ "space", .switch_shader },
 });
 
-pub fn get_event_from_sdl_keyboard(keyboard: sdl3.keycode.Keycode) InputEvent {
+pub fn get_event_from_sdl_keyboard(keyboard: sdl3.keycode.Keycode) ?InputEvent {
     if (keymap.get(@tagName(keyboard))) | input | {
         return input;
     } else {
-        return .none;
+        return null;
     }
 }
