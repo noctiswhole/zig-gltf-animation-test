@@ -13,6 +13,7 @@ pub fn init() UniformBuffer {
     gl.bindBuffer(gl.UNIFORM_BUFFER, ubo);
     gl.bufferData(gl.UNIFORM_BUFFER, 2 * @sizeOf(Mat4), null, gl.STATIC_DRAW);
     gl.bindBuffer(gl.UNIFORM_BUFFER, 0);
+    gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, ubo, 0, 2 * @sizeOf(Mat4));
 
     Logger.log("UBO initialized");
 
@@ -22,11 +23,8 @@ pub fn init() UniformBuffer {
 }
 
 pub fn upload_data(self: UniformBuffer, view_matrix: Mat4, projection_matrix: Mat4) void {
-    gl.bindBuffer(gl.UNIFORM_BUFFER, self.ubo);
-    gl.bufferSubData(gl.UNIFORM_BUFFER, 0, @sizeOf(Mat4), &view_matrix);
-    gl.bufferSubData(gl.UNIFORM_BUFFER, @sizeOf(Mat4), @sizeOf(Mat4), &projection_matrix);
-    gl.bindBufferRange(gl.UNIFORM_BUFFER, 0, self.ubo, 0, 2 * @sizeOf(Mat4));
-    gl.bindBuffer(gl.UNIFORM_BUFFER, 0);
+    gl.namedBufferSubData(self.ubo, 0, @sizeOf(Mat4), &view_matrix);
+    gl.namedBufferSubData(self.ubo, @sizeOf(Mat4), @sizeOf(Mat4), &projection_matrix);
 }
 
 pub fn deinit(self: *UniformBuffer) void {

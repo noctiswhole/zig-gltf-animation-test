@@ -35,13 +35,7 @@ pub fn init() VertexBuffer {
 }
 
 pub fn upload_data(self: VertexBuffer, mesh: Mesh) void {
-    gl.bindVertexArray(self.vao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, self.vbo);
-
-    gl.bufferData(gl.ARRAY_BUFFER, @intCast(mesh.items.len * @sizeOf(Vertex)), mesh.items.ptr, gl.DYNAMIC_DRAW);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
-    gl.bindVertexArray(0);
+    gl.namedBufferData(self.vbo, @intCast(mesh.items.len * @sizeOf(Vertex)), mesh.items.ptr, gl.DYNAMIC_DRAW);
 }
 
 pub fn bind(self: VertexBuffer) void {

@@ -68,21 +68,14 @@ pub fn unbind(_: Framebuffer) void {
 }
 
 pub fn draw_to_screen(self: Framebuffer) void {
-    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, self.frame_buffer);
-    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, 0);
-    gl.blitFramebuffer(0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), 0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), gl.COLOR_BUFFER_BIT, gl.NEAREST);
-    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, 0);
+    gl.blitNamedFramebuffer(self.frame_buffer, 0, 0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), 0, 0, @intCast(self.buffer_width), @intCast(self.buffer_height), gl.COLOR_BUFFER_BIT, gl.NEAREST);
 }
 
 fn check_complete(frame_buffer: gl.GLuint) bool {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, frame_buffer);
-
-    const result = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    const result = gl.checkNamedFramebufferStatus(frame_buffer, gl.FRAMEBUFFER);
     if (result != gl.FRAMEBUFFER_COMPLETE) {
         return false;
     }
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
     return true;
 }
 
