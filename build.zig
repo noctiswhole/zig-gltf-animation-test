@@ -79,9 +79,16 @@ pub fn build(b: *std.Build) void {
     const zalgebra = b.dependency("zalgebra", .{});
     exe.root_module.addImport("zalgebra", zalgebra.module("zalgebra"));
 
-    const cimgui = b.dependency("cimgui", .{});
-    exe.root_module.addImport("cimgui", cimgui.module("cimgui"));
-    
+    const cimgui = @import("cimgui_zig");
+    const cimgui_dep = b.dependency("cimgui_zig", .{
+        .target = target,
+        .optimize = optimize,
+        .platform = cimgui.Platform.SDL3,
+        .renderer = cimgui.Renderer.OpenGL3,
+    });
+
+    exe.root_module.linkLibrary(cimgui_dep.artifact("cimgui"));
+
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
     // step when running `zig build`).

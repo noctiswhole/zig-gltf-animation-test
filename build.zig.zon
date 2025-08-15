@@ -48,13 +48,13 @@
             .url = "git+https://github.com/kooparse/zgltf#9c82e04aa0ff9418a29a588573b4aa5f83195fc6",
             .hash = "zgltf-0.1.0-sX6QAt0TAgDvPeZcAjqLu4ANd3QSaOx3QDsssykcLYiC",
         },
-        .cimgui = .{
-            .url = "git+https://github.com/floooh/dcimgui#3b98e0a57fc17cc72fdda6934bd932426778a16e",
-            .hash = "cimgui-0.1.0-44ClkczdkgCE9Z_0ehliUmEJjg-bjQVy1r55RQPw9N10",
-        },
         .zalgebra = .{
             .url = "git+https://github.com/kooparse/zalgebra#412c3e1cddcf6b8494a6c008dd152c6e0ec5e846",
             .hash = "zalgebra-0.0.0-aaiVSk5nAQA4CIV_flm1iIpWiSrVcxggA9y_aaa-TtdR",
+        },
+        .cimgui_zig = .{
+            .url = "git+https://github.com/tiawl/cimgui.zig#7613777415be737330272ad7bd9ed7d8ae2d82cd",
+            .hash = "cimgui_zig-1.0.0-2XubknimVQBmbXYhhAxOTaxKCpN6v49Nj9ArsfCmSBBE",
         },
     },
     .paths = .{
