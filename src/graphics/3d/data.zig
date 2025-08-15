@@ -15,3 +15,5 @@ pub const Vertex = extern struct {
 };
 
 pub const Mesh = std.ArrayListUnmanaged(Vertex);
+
+pub const Mat4 = [16]f32; // Simplified matrix type

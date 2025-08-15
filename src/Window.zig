@@ -76,7 +76,7 @@ pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
     }
 }
 
-pub fn main_loop(self: Window) !void {
+pub fn main_loop(self: *Window) !void {
     self.renderer.draw();
     try self.swap();
 }

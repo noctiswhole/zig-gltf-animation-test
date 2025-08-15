@@ -54,6 +54,9 @@ fn compileShader(allocator: std.mem.Allocator, vertex_source: [:0]const u8, frag
         return error.InvalidShader;
     }
 
+    const ubo_index: gl.GLuint = gl.getUniformBlockIndex(program, "Matrices");
+    gl.uniformBlockBinding(program, ubo_index, 0);
+
     return program;
 }
 
