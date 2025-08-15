@@ -16,10 +16,12 @@ pub fn init() VertexBuffer {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "position")));
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "uv")));
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "color")));
+    gl.vertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "uv")));
 
     gl.enableVertexAttribArray(0);
     gl.enableVertexAttribArray(1);
+    gl.enableVertexAttribArray(2);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, 0);
     gl.bindVertexArray(0);
