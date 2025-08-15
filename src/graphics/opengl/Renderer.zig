@@ -6,10 +6,13 @@ const VertexBuffer = @import("VertexBuffer.zig");
 const UniformBuffer = @import("UniformBuffer.zig");
 const data = @import("../3d/data.zig");
 const Mesh = data.Mesh;
-const Mat4 = data.Mat4;
 const Logger = @import("../../io/Logger.zig").makeLogger("Renderer");
 const std = @import("std");
 const gl = @import("gl");
+const zalgebra = @import("zalgebra");
+const Mat4 = zalgebra.Mat4;
+const Vec3 = zalgebra.Vec3;
+const math = std.math;
 framebuffer: Framebuffer,
 texture: Texture,
 shader: Shader,
@@ -18,14 +21,8 @@ vertex_buffer: VertexBuffer,
 uniform_buffer: UniformBuffer,
 triangle_count: usize = 0,
 is_shader_swap: bool = false,
-view_matrix: Mat4 = .{ 1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1 },
-projection_matrix: Mat4 = .{ 1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1 },
+projection_matrix: Mat4,
+view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(3, 3, 3), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     // _ = width;
@@ -49,6 +46,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .vertex_buffer = vertex_buffer,
         .uniform_buffer = uniform_buffer,
         .shader_changed = shader_changed,
+        .projection_matrix = generate_projection_matrix(width, height),
     };
 }
 
@@ -58,7 +56,11 @@ pub fn deinit(self: *Renderer) void {
     self.shader.deinit();
     self.framebuffer.deinit();
     self.vertex_buffer.deinit();
+}
 
+fn generate_projection_matrix(width: usize, height: usize) Mat4 {
+    // return zmath.perspectiveFovRhGl(0.25 * math.pi, @as(f32, @floatFromInt(width))/@as(f32, @floatFromInt(height)), 0.1, 20.0);
+    return zalgebra.perspective(45, @as(f32, @floatFromInt(width))/@as(f32, @floatFromInt(height)), 0.1, 100.0);
 }
 
 pub fn upload_data(self: *Renderer, mesh: Mesh) void {
@@ -72,6 +74,7 @@ pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
     }
 
     try self.framebuffer.resize(width, height);
+    self.projection_matrix = generate_projection_matrix(width, height);
     gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
