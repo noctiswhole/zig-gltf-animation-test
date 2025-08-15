@@ -1,4 +1,4 @@
-const DcImGui = @This();
+const Gui = @This();
 const sdl3 = @import("sdl3");
 pub const c = @cImport({
     @cInclude("dcimgui.h");
@@ -8,7 +8,7 @@ pub const c = @cImport({
 
 context: *c.ImGuiContext,
 
-pub fn init(window: sdl3.video.Window, context: sdl3.video.gl.Context) !DcImGui {
+pub fn init(window: sdl3.video.Window, context: sdl3.video.gl.Context) !Gui {
     if (c.ImGui_CreateContext(null))  | imgui_context| {
         const imio = c.ImGui_GetIO();
         imio.*.ConfigFlags = c.ImGuiConfigFlags_NavEnableKeyboard;
@@ -28,11 +28,11 @@ pub fn init(window: sdl3.video.Window, context: sdl3.video.gl.Context) !DcImGui 
     }
 }
 
-pub fn event(_: *DcImGui) void {
-    _ = c.cImGui_ImplSDL3_ProcessEvent(&event);
+pub fn event_handle(_: *Gui, event: sdl3.events.Event) void {
+    _ = c.cImGui_ImplSDL3_ProcessEvent(@ptrCast(&sdl3.events.Event.toSdl(event)));
 }
 
-pub fn draw(_: *DcImGui) void {
+pub fn draw(_: *Gui) void {
     c.cImGui_ImplOpenGL3_NewFrame();
     c.cImGui_ImplSDL3_NewFrame();
     c.ImGui_NewFrame();
@@ -41,7 +41,7 @@ pub fn draw(_: *DcImGui) void {
     c.cImGui_ImplOpenGL3_RenderDrawData(c.ImGui_GetDrawData());
 }
 
-pub fn deinit(self: *DcImGui) void {
+pub fn deinit(self: *Gui) void {
     c.cImGui_ImplOpenGL3_Shutdown();
     c.cImGui_ImplSDL3_Shutdown();
     c.ImGui_DestroyContext(self.context);

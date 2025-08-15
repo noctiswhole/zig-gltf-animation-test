@@ -2,7 +2,7 @@ const Window = @This();
 const Renderer = @import("graphics/opengl/Renderer.zig");
 const Model = @import("graphics/3d/Model.zig");
 const SDLKeymap = @import("io/SDLKeymap.zig");
-const DcImGui = @import("graphics/gui/DcImGui.zig");
+const Gui = @import("graphics/gui/dcimgui/Gui.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
@@ -20,7 +20,7 @@ pub fn getProcAddress(p: sdl3.video.gl.Context, proc: [:0]const u8) *const anyop
 window: sdl3.video.Window,
 context: sdl3.video.gl.Context,
 renderer: Renderer,
-gui: DcImGui,
+gui: Gui,
 
 pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_width: usize, screen_height: usize) !Window {
     // Initialize SDL with subsystems you need here.
@@ -39,7 +39,7 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
 
     const context = try sdl3.video.gl.Context.init(window);
 
-    const gui = try DcImGui.init(window, context);
+    const gui = try Gui.init(window, context);
 
     try gl.load(context, getProcAddress);
     var renderer = try Renderer.init(allocator, 640, 480);
@@ -65,6 +65,20 @@ pub fn deinit(self: *Window) !void {
 
 pub fn swap(self: Window) !void {
     try sdl3.video.gl.swapWindow(self.window);
+}
+
+pub fn event_handle(self: *Window, event: sdl3.events.Event) void {
+    self.gui.event_handle(event);
+    switch (event) {
+        .key_down => {
+            if (event.key_down.key) |keycode| {
+                self.event_keyboard(keycode);
+            }
+        },
+        else => {
+
+        }
+    }
 }
 
 pub fn event_window_resized(self: *Window) !void {
