@@ -96,6 +96,7 @@ pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
 }
 
 pub fn main_loop(self: *Window) !void {
+    self.renderer.update(sdl3.timer.getMillisecondsSinceInit());
     self.renderer.draw();
     self.gui.draw();
     try self.swap();

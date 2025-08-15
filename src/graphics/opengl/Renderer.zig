@@ -23,6 +23,7 @@ uniform_buffer: UniformBuffer,
 triangle_count: usize = 0,
 is_shader_swap: bool = false,
 projection_matrix: Mat4,
+ticks: usize,
 view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(3, 3, 3), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
@@ -48,6 +49,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .uniform_buffer = uniform_buffer,
         .shader_changed = shader_changed,
         .projection_matrix = generate_projection_matrix(width, height),
+        .ticks = 0,
     };
 }
 
@@ -79,6 +81,10 @@ pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
     gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
+pub fn update(self: *Renderer, ticks: usize) void {
+    self.ticks = ticks;
+}
+
 pub fn draw(self: Renderer) void {
     self.framebuffer.bind();
     defer self.framebuffer.unbind();
@@ -88,12 +94,16 @@ pub fn draw(self: Renderer) void {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    self.uniform_buffer.upload_data(self.view_matrix, self.projection_matrix);
+    var model: Mat4 = Mat4.identity();
+    const angle: f32 = @floatFromInt(self.ticks/3);
     if (self.is_shader_swap) {
+        model = model.rotate(angle, Vec3.new(0, 0, 1));
         self.shader_changed.use();
     } else {
+        model = model.rotate(-angle, Vec3.new(0, 0, 1));
         self.shader.use();
     }
+    self.uniform_buffer.upload_data(self.view_matrix.mul(model), self.projection_matrix);
 
     self.texture.bind();
     defer self.texture.unbind();
