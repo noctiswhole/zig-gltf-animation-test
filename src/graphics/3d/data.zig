@@ -22,7 +22,7 @@ pub const RenderData = extern struct {
     width: usize,
     height: usize,
     triangle_count: usize,
-    field_of_view: i32,
+    field_of_view: f32,
     use_changed_shader: bool = false,
     frame_time: usize = 0,
     matrix_generate_time: f32 = 0,

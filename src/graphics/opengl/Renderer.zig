@@ -15,7 +15,7 @@ const RenderData = data.RenderData;
 const Mat4 = zalgebra.Mat4;
 const Vec3 = zalgebra.Vec3;
 const math = std.math;
-const DEFAULT_FOV: i32 = 90;
+const DEFAULT_FOV: f32 = 90;
 
 framebuffer: Framebuffer,
 texture: Texture,
@@ -55,7 +55,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .vertex_buffer = vertex_buffer,
         .uniform_buffer = uniform_buffer,
         .shader_changed = shader_changed,
-        .projection_matrix = generate_projection_matrix(width, height),
+        .projection_matrix = generate_projection_matrix(width, height, DEFAULT_FOV),
         .render_data = render_data,
     };
 }
@@ -68,9 +68,9 @@ pub fn deinit(self: *Renderer) void {
     self.vertex_buffer.deinit();
 }
 
-fn generate_projection_matrix(width: usize, height: usize) Mat4 {
+fn generate_projection_matrix(width: usize, height: usize, fov: f32) Mat4 {
     // return zmath.perspectiveFovRhGl(0.25 * math.pi, @as(f32, @floatFromInt(width))/@as(f32, @floatFromInt(height)), 0.1, 20.0);
-    return zalgebra.perspective(45, @as(f32, @floatFromInt(width))/@as(f32, @floatFromInt(height)), 0.1, 100.0);
+    return zalgebra.perspective(fov, @as(f32, @floatFromInt(width))/@as(f32, @floatFromInt(height)), 0.1, 100.0);
 }
 
 pub fn upload_data(self: *Renderer, mesh: Mesh) void {
@@ -86,7 +86,7 @@ pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
     try self.framebuffer.resize(width, height);
     self.render_data.width = width;
     self.render_data.height = height;
-    self.projection_matrix = generate_projection_matrix(width, height);
+    self.projection_matrix = generate_projection_matrix(width, height, self.render_data.field_of_view);
     gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
@@ -96,7 +96,7 @@ pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32)) v
     self.render_data.fps = frame_capper.getObservedFps();
 }
 
-pub fn draw(self: Renderer) void {
+pub fn draw(self: *Renderer) void {
     self.framebuffer.bind();
     defer self.framebuffer.unbind();
     gl.clearColor(0.1, 0.1, 0.1, 1);
@@ -105,9 +105,11 @@ pub fn draw(self: Renderer) void {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
+    self.projection_matrix = generate_projection_matrix(self.render_data.width, self.render_data.height, self.render_data.field_of_view);
+
     var model: Mat4 = Mat4.identity();
     const angle: f32 = @floatFromInt(self.render_data.ticks);
-    if (self.is_shader_swap) {
+    if (self.render_data.use_changed_shader) {
         model = model.rotate(angle, Vec3.new(0, 0, 1));
         self.shader_changed.use();
     } else {
@@ -127,5 +129,5 @@ pub fn draw(self: Renderer) void {
 }
 
 pub fn shader_swap(self: *Renderer) void {
-    self.is_shader_swap = !self.is_shader_swap;
+    self.render_data.use_changed_shader = !self.render_data.use_changed_shader;
 }

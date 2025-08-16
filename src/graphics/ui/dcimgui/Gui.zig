@@ -33,7 +33,7 @@ pub fn event_handle(_: *Gui, event: sdl3.events.Event) bool {
     return c.cImGui_ImplSDL3_ProcessEvent(@ptrCast(&sdl3.events.Event.toSdl(event)));
 }
 
-pub fn create_frame(_: *Gui, render_data: RenderData) void {
+pub fn create_frame(_: *Gui, render_data: *RenderData) void {
     c.cImGui_ImplOpenGL3_NewFrame();
     c.cImGui_ImplSDL3_NewFrame();
     c.ImGui_NewFrame();
@@ -44,9 +44,34 @@ pub fn create_frame(_: *Gui, render_data: RenderData) void {
     c.ImGui_SetNextWindowBgAlpha(0.8);
     // c.ImGui_ShowDemoWindow(null);
     _ = c.ImGui_Begin("Control", null, window_flags);
+    _ = c.ImGui_Text("FPS: %.2f ms", render_data.fps);
+    _ = c.ImGui_Separator();
+    _ = c.ImGui_Text("Frame Time: %d ms", render_data.frame_time / 1000000);
+    _ = c.ImGui_Text("Matrix Generation Time: %.2f ms", render_data.matrix_generate_time);
+    _ = c.ImGui_Text("Matrix Upload Time: %.2f ms", render_data.upload_to_ubo_time);
+    _ = c.ImGui_Text("UI Generation Time: %.2f ms", render_data.ui_generate_time);
+    _ = c.ImGui_Text("UI Draw Time: %.2f ms", render_data.ui_draw_time);
+    _ = c.ImGui_Separator();
     _ = c.ImGui_Text("Triangles: %d", render_data.triangle_count);
     _ = c.ImGui_Text("Window Dimensions: %dx%d", render_data.width, render_data.height);
-    _ = c.ImGui_End();
+    _ = c.ImGui_Separator();
+    // Shader toggle button
+    if (c.ImGui_Button("Toggle Shader")) {
+        render_data.use_changed_shader = !render_data.use_changed_shader;
+    }
+    _ = c.ImGui_SameLine();
+    if (!render_data.use_changed_shader) {
+        _ = c.ImGui_Text("Basic Shader");
+    } else {
+        _ = c.ImGui_Text("Changed Shader");
+    }
+
+    _ = c.ImGui_Separator();
+    _ = c.ImGui_Text("Field of View: %f", render_data.field_of_view);
+    // _ = c.ImGui_SliderInt("##FOV", &render_data.field_of_view, 40, 150);
+     _ = c.ImGui_SliderFloat("##FOV", &render_data.field_of_view, 40, 150);
+     _ = c.ImGui_End();
+
 }
 
 pub fn draw(_: *Gui) void {
