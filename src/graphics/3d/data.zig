@@ -27,8 +27,7 @@ pub const RenderData = extern struct {
     frame_time: usize = 0,
     matrix_generate_time: f32 = 0,
     upload_to_ubo_time: f32 = 0,
-    ui_generate_time: f32 = 0,
-    ui_draw_time: f32 = 0,
+    render_time: f32 = 0,
     ticks: usize = 0,
     fps: f32 = 0,
 };

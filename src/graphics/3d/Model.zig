@@ -10,37 +10,37 @@ pub fn init(allocator: std.mem.Allocator) !Model {
     var mesh: Mesh = .empty;
     const vertices = [_]Vertex{
         .{
-            .position = .{-0.5, -0.5, 0.5},
+            .position = .{-0.5, -0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{0.0, 0.0, 1.0},
             .uv = .{0.0, 0.0},
         },
         .{
-            .position = .{0.5, 0.5, 0.5},
+            .position = .{0.5, 0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{0.0, 1.0, 1.0},
             .uv = .{1.0, 1.0},
         },
         .{
-            .position = .{-0.5, 0.5, 0.5},
+            .position = .{-0.5, 0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{1.0, 1.0, 0.0},
             .uv = .{0.0, 1.0},
         },
         .{
-            .position = .{-0.5, -0.5, 0.5},
+            .position = .{-0.5, -0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{1.0, 0.0, 1.0},
             .uv = .{0.0, 0.0},
         },
         .{
-            .position = .{0.5, -0.5, 0.5},
+            .position = .{0.5, -0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{0.0, 1.0, 0.0},
             .uv = .{1.0, 0.0},
         },
         .{
-            .position = .{0.5, 0.5, 0.5},
+            .position = .{0.5, 0.5, 0},
             .normal = .{0, 0, 0},
             .color = .{1.0, 1.0, 1.0},
             .uv = .{1.0, 1.0},

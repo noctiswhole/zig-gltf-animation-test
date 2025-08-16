@@ -4,6 +4,7 @@ const Texture = @import("Texture.zig");
 const Shader = @import("Shader.zig");
 const VertexBuffer = @import("VertexBuffer.zig");
 const UniformBuffer = @import("UniformBuffer.zig");
+const Timer = @import("../../tools/Timer.zig");
 const data = @import("../3d/data.zig");
 const Mesh = data.Mesh;
 const Logger = @import("../../io/Logger.zig").makeLogger("Renderer");
@@ -26,7 +27,7 @@ uniform_buffer: UniformBuffer,
 is_shader_swap: bool = false,
 render_data: RenderData,
 projection_matrix: Mat4,
-view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(3, 3, 3), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
+view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(2, 2, 2), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     const framebuffer = try Framebuffer.init(width, height);
@@ -105,27 +106,47 @@ pub fn draw(self: *Renderer) void {
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    self.projection_matrix = generate_projection_matrix(self.render_data.width, self.render_data.height, self.render_data.field_of_view);
-
+    var timer_matrix: Timer = .{};
+    var timer_ubo: Timer = .{};
+    var timer_draw: Timer = .{};
     var model: Mat4 = Mat4.identity();
-    const angle: f32 = @floatFromInt(self.render_data.ticks);
-    if (self.render_data.use_changed_shader) {
-        model = model.rotate(angle, Vec3.new(0, 0, 1));
-        self.shader_changed.use();
-    } else {
-        model = model.rotate(-angle, Vec3.new(0, 0, 1));
-        self.shader.use();
+
+    {
+        timer_matrix.start();
+        defer timer_matrix.stop();
+        self.projection_matrix = generate_projection_matrix(self.render_data.width, self.render_data.height, self.render_data.field_of_view);
+        const angle: f32 = @floatFromInt(self.render_data.ticks);
+        if (self.render_data.use_changed_shader) {
+            model = model.rotate(angle, Vec3.new(0, 0, 1));
+            self.shader_changed.use();
+        } else {
+            model = model.rotate(-angle, Vec3.new(0, 0, 1));
+            self.shader.use();
+        }
     }
-    self.uniform_buffer.upload_data(self.view_matrix.mul(model), self.projection_matrix);
 
-    self.texture.bind();
-    defer self.texture.unbind();
-    self.vertex_buffer.bind();
-    defer self.vertex_buffer.unbind();
+    {
+        timer_ubo.start();
+        defer timer_ubo.stop();
+        self.uniform_buffer.upload_data(self.view_matrix.mul(model), self.projection_matrix);
+    }
 
-    self.vertex_buffer.draw(gl.TRIANGLES, 0, self.render_data.triangle_count * 3);
+    {
+        timer_draw.start();
+        defer timer_draw.stop();
+        self.texture.bind();
+        defer self.texture.unbind();
+        self.vertex_buffer.bind();
+        defer self.vertex_buffer.unbind();
 
-    self.framebuffer.draw_to_screen();
+        self.vertex_buffer.draw(gl.TRIANGLES, 0, self.render_data.triangle_count * 3);
+
+        self.framebuffer.draw_to_screen();
+    }
+
+    self.render_data.matrix_generate_time = timer_matrix.get_time();
+    self.render_data.upload_to_ubo_time = timer_ubo.get_time();
+    self.render_data.render_time = timer_draw.get_time();
 }
 
 pub fn shader_swap(self: *Renderer) void {

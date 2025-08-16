@@ -1,11 +1,19 @@
 const Window = @This();
 const Renderer = @import("graphics/opengl/Renderer.zig");
+const data = @import("graphics/3d/data.zig");
+const RenderData = data.RenderData;
+const Timer = @import("tools/Timer.zig");
 const Model = @import("graphics/3d/Model.zig");
 const SDLKeymap = @import("io/SDLKeymap.zig");
 const Gui = @import("graphics/ui/dcimgui/Gui.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
+
+pub const WindowData = extern struct {
+    ui_generate_time: f32 = 0,
+    ui_draw_time: f32 = 0,
+};
 
 const SDL_INIT_FLAGS = sdl3.InitFlags{
     .video = true,
@@ -20,6 +28,7 @@ pub fn getProcAddress(p: sdl3.video.gl.Context, proc: [:0]const u8) *const anyop
 window: sdl3.video.Window,
 context: sdl3.video.gl.Context,
 renderer: Renderer,
+window_data: WindowData = .{},
 gui: Gui,
 
 pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_width: usize, screen_height: usize) !Window {
@@ -98,7 +107,18 @@ pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
 pub fn main_loop(self: *Window, frame_capper: sdl3.extras.FramerateCapper(f32)) !void {
     self.renderer.update(frame_capper);
     self.renderer.draw();
-    self.gui.create_frame(&self.renderer.render_data);
+
+    var gui_frame_timer: Timer = .{};
+    var gui_draw_timer: Timer = .{};
+
+    gui_frame_timer.start();
+    self.gui.create_frame(&self.renderer.render_data, &self.window_data);
+    gui_frame_timer.stop();
+    gui_draw_timer.start();
     self.gui.draw();
+    gui_draw_timer.stop();
+
+    self.window_data.ui_generate_time = gui_frame_timer.get_time();
+    self.window_data.ui_draw_time = gui_draw_timer.get_time();
     try self.swap();
 }
