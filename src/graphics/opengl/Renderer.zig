@@ -9,10 +9,13 @@ const Mesh = data.Mesh;
 const Logger = @import("../../io/Logger.zig").makeLogger("Renderer");
 const std = @import("std");
 const gl = @import("gl");
+const sdl3 = @import("sdl3");
 const zalgebra = @import("zalgebra");
+const RenderData = data.RenderData;
 const Mat4 = zalgebra.Mat4;
 const Vec3 = zalgebra.Vec3;
 const math = std.math;
+const DEFAULT_FOV: i32 = 90;
 
 framebuffer: Framebuffer,
 texture: Texture,
@@ -20,15 +23,12 @@ shader: Shader,
 shader_changed: Shader,
 vertex_buffer: VertexBuffer,
 uniform_buffer: UniformBuffer,
-triangle_count: usize = 0,
 is_shader_swap: bool = false,
+render_data: RenderData,
 projection_matrix: Mat4,
-ticks: usize,
 view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(3, 3, 3), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
-    // _ = width;
-    // _ = height;
     const framebuffer = try Framebuffer.init(width, height);
     Logger.log("Framebuffer initialized");
     const texture = try Texture.texture_from_file("resources/crate.png");
@@ -41,6 +41,13 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     Logger.log("Shader initialized");
     const shader_changed = try Shader.init(allocator, "resources/shaders/changed.vert", "resources/shaders/changed.frag");
     Logger.log("Shader2 initialized");
+
+    const render_data: RenderData = .{
+        .width = width,
+        .height = height,
+        .triangle_count = 0,
+        .field_of_view = DEFAULT_FOV,
+    };
     return .{
         .framebuffer = framebuffer,
         .texture = texture,
@@ -49,7 +56,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .uniform_buffer = uniform_buffer,
         .shader_changed = shader_changed,
         .projection_matrix = generate_projection_matrix(width, height),
-        .ticks = 0,
+        .render_data = render_data,
     };
 }
 
@@ -67,7 +74,7 @@ fn generate_projection_matrix(width: usize, height: usize) Mat4 {
 }
 
 pub fn upload_data(self: *Renderer, mesh: Mesh) void {
-    self.triangle_count = mesh.items.len / 3;
+    self.render_data.triangle_count = mesh.items.len / 3;
     self.vertex_buffer.upload_data(mesh);
 }
 
@@ -77,12 +84,16 @@ pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
     }
 
     try self.framebuffer.resize(width, height);
+    self.render_data.width = width;
+    self.render_data.height = height;
     self.projection_matrix = generate_projection_matrix(width, height);
     gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
-pub fn update(self: *Renderer, ticks: usize) void {
-    self.ticks = ticks;
+pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32)) void {
+    self.render_data.ticks = frame_capper.frame_num;
+    self.render_data.frame_time = frame_capper.dt;
+    self.render_data.fps = frame_capper.getObservedFps();
 }
 
 pub fn draw(self: Renderer) void {
@@ -95,7 +106,7 @@ pub fn draw(self: Renderer) void {
     gl.enable(gl.DEPTH_TEST);
 
     var model: Mat4 = Mat4.identity();
-    const angle: f32 = @floatFromInt(self.ticks/3);
+    const angle: f32 = @floatFromInt(self.render_data.ticks);
     if (self.is_shader_swap) {
         model = model.rotate(angle, Vec3.new(0, 0, 1));
         self.shader_changed.use();
@@ -110,7 +121,7 @@ pub fn draw(self: Renderer) void {
     self.vertex_buffer.bind();
     defer self.vertex_buffer.unbind();
 
-    self.vertex_buffer.draw(gl.TRIANGLES, 0, self.triangle_count * 3);
+    self.vertex_buffer.draw(gl.TRIANGLES, 0, self.render_data.triangle_count * 3);
 
     self.framebuffer.draw_to_screen();
 }

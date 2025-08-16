@@ -78,7 +78,7 @@ pub fn iterate(app_state: *AppState) !sdl3.AppResult {
     _ = dt;
 
 
-    app_state.window.main_loop() catch {
+    app_state.window.main_loop(app_state.frame_capper) catch {
         @panic("Main loop error");
     };
     return .run;

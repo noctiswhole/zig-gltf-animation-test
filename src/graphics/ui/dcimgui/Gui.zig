@@ -1,4 +1,5 @@
 const Gui = @This();
+const RenderData = @import("../../3d/data.zig").RenderData;
 const sdl3 = @import("sdl3");
 pub const c = @cImport({
     @cInclude("dcimgui.h");
@@ -32,11 +33,23 @@ pub fn event_handle(_: *Gui, event: sdl3.events.Event) bool {
     return c.cImGui_ImplSDL3_ProcessEvent(@ptrCast(&sdl3.events.Event.toSdl(event)));
 }
 
-pub fn draw(_: *Gui) void {
+pub fn create_frame(_: *Gui, render_data: RenderData) void {
     c.cImGui_ImplOpenGL3_NewFrame();
     c.cImGui_ImplSDL3_NewFrame();
     c.ImGui_NewFrame();
-    c.ImGui_ShowDemoWindow(null);
+
+    var window_flags: c.ImGuiWindowFlags = 0;
+    window_flags |= c.ImGuiWindowFlags_NoCollapse;
+
+    c.ImGui_SetNextWindowBgAlpha(0.8);
+    // c.ImGui_ShowDemoWindow(null);
+    _ = c.ImGui_Begin("Control", null, window_flags);
+    _ = c.ImGui_Text("Triangles: %d", render_data.triangle_count);
+    _ = c.ImGui_Text("Window Dimensions: %dx%d", render_data.width, render_data.height);
+    _ = c.ImGui_End();
+}
+
+pub fn draw(_: *Gui) void {
     c.ImGui_Render();
     c.cImGui_ImplOpenGL3_RenderDrawData(c.ImGui_GetDrawData());
 }
