@@ -44,7 +44,7 @@ pub fn create_frame(_: *Gui, render_data: *RenderData) void {
     c.ImGui_SetNextWindowBgAlpha(0.8);
     // c.ImGui_ShowDemoWindow(null);
     _ = c.ImGui_Begin("Control", null, window_flags);
-    _ = c.ImGui_Text("FPS: %.2f ms", render_data.fps);
+    _ = c.ImGui_Text("FPS: %.2f", render_data.fps);
     _ = c.ImGui_Separator();
     _ = c.ImGui_Text("Frame Time: %d ms", render_data.frame_time / 1000000);
     _ = c.ImGui_Text("Matrix Generation Time: %.2f ms", render_data.matrix_generate_time);
