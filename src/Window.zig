@@ -13,6 +13,7 @@ const std = @import("std");
 pub const WindowData = extern struct {
     ui_generate_time: f32 = 0,
     ui_draw_time: f32 = 0,
+    mouse_grab: bool = false,
 };
 
 const SDL_INIT_FLAGS = sdl3.InitFlags{
@@ -101,9 +102,11 @@ pub fn event_window_resized(self: *Window) !void {
 // TODO: move input to some sort of event system
 pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseButton) !void {
     if (SDLKeymap.get_event_from_sdl_mouse_button(mouse_button_event.button)) |event| {
-        self.renderer.handle_event(event);
-        try self.window.setMouseGrab(self.renderer.render_data.camera_control);
-        try sdl3.mouse.setWindowRelativeMode(self.window, self.renderer.render_data.camera_control);
+        if (event == .camera_control) {
+            self.window_data.mouse_grab = !self.window_data.mouse_grab;
+        }
+        try self.window.setMouseGrab(self.window_data.mouse_grab);
+        try sdl3.mouse.setWindowRelativeMode(self.window, self.window_data.mouse_grab);
     }
 }
 

@@ -160,10 +160,6 @@ pub fn handle_event(self: *Renderer, event: InputEvent) void {
         .switch_shader => {
             self.shader_swap();
         },
-        .camera_control => {
-            self.render_data.camera_control = !self.render_data.camera_control;
-            Logger.log("Toggle camera control");
-        },
         else => {
 
         }

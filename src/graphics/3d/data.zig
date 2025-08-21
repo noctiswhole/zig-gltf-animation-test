@@ -32,5 +32,4 @@ pub const RenderData = extern struct {
     fps: f32 = 0,
     view_azimuth: f32 = 0,
     view_elevation: f32 = 0,
-    camera_control: bool = false,
 };

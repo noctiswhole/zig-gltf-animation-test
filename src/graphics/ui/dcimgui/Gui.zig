@@ -57,7 +57,7 @@ pub fn create_frame(_: *Gui, render_data: *RenderData, window_data: *WindowData)
     _ = c.ImGui_Text("Triangles: %d", render_data.triangle_count);
     _ = c.ImGui_Text("Window Dimensions: %dx%d", render_data.width, render_data.height);
     _ = c.ImGui_Separator();
-    _ = c.ImGui_Text("Camera Control: %b", render_data.camera_control);
+    _ = c.ImGui_Text("Camera Control: %b", window_data.mouse_grab);
     _ = c.ImGui_Separator();
     // Shader toggle button
     if (c.ImGui_Button("Toggle Shader")) {
