@@ -84,6 +84,9 @@ pub fn event_handle(self: *Window, event: sdl3.events.Event) void {
                 self.event_keyboard(keycode);
             }
         },
+        .mouse_button_down => {
+            self.event_mouse_button(event.mouse_button_down);
+        },
         else => {
 
         }
@@ -95,12 +98,18 @@ pub fn event_window_resized(self: *Window) !void {
     try self.renderer.set_size(size.width, size.height);
 }
 
+// TODO: move input to some sort of event system
+pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseButton) void {
+    if (SDLKeymap.get_event_from_sdl_mouse_button(mouse_button_event.button)) |event| {
+        self.renderer.handle_event(event);
+    }
+
+}
+
+// TODO: move input to some sort of event system
 pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
     if (SDLKeymap.get_event_from_sdl_keyboard(key_event)) |event| {
-        if (event == .switch_shader) {
-            std.debug.print("We pressed space!", .{});
-            self.renderer.shader_swap();
-        }
+        self.renderer.handle_event(event);
     }
 }
 

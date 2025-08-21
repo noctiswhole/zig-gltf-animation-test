@@ -15,6 +15,8 @@ const zalgebra = @import("zalgebra");
 const RenderData = data.RenderData;
 const Mat4 = zalgebra.Mat4;
 const Vec3 = zalgebra.Vec3;
+const Camera = @import("../3d/Camera.zig");
+const InputEvent = @import("../../io/InputMap.zig").InputEvent;
 const math = std.math;
 const DEFAULT_FOV: f32 = 90;
 
@@ -27,7 +29,7 @@ uniform_buffer: UniformBuffer,
 is_shader_swap: bool = false,
 render_data: RenderData,
 projection_matrix: Mat4,
-view_matrix: Mat4 = zalgebra.lookAt(Vec3.new(2, 2, 2), Vec3.new(0, 0, 0), Vec3.new(0, 1, 0)),
+camera: Camera = .{},
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     const framebuffer = try Framebuffer.init(width, height);
@@ -128,7 +130,7 @@ pub fn draw(self: *Renderer) void {
     {
         timer_ubo.start();
         defer timer_ubo.stop();
-        self.uniform_buffer.upload_data(self.view_matrix.mul(model), self.projection_matrix);
+        self.uniform_buffer.upload_data(self.camera.get_view_matrix(&self.render_data).mul(model), self.projection_matrix);
     }
 
     {
@@ -151,4 +153,19 @@ pub fn draw(self: *Renderer) void {
 
 pub fn shader_swap(self: *Renderer) void {
     self.render_data.use_changed_shader = !self.render_data.use_changed_shader;
+}
+
+pub fn handle_event(self: *Renderer, event: InputEvent) void {
+    switch (event) {
+        .switch_shader => {
+            self.shader_swap();
+        },
+        .camera_control => {
+            self.render_data.camera_control = !self.render_data.camera_control;
+            Logger.log("Giving camera control");
+        },
+        else => {
+
+        }
+    }
 }
