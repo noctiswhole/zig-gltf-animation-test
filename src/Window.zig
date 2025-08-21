@@ -102,11 +102,9 @@ pub fn event_window_resized(self: *Window) !void {
 pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseButton) !void {
     if (SDLKeymap.get_event_from_sdl_mouse_button(mouse_button_event.button)) |event| {
         self.renderer.handle_event(event);
-        sdl3.mouse.capture(self.renderer.render_data.camera_control) catch {
-            // Wayland mouse capture not supported...
-        };
+        try self.window.setMouseGrab(self.renderer.render_data.camera_control);
+        try sdl3.mouse.setWindowRelativeMode(self.window, self.renderer.render_data.camera_control);
     }
-
 }
 
 // TODO: move input to some sort of event system
