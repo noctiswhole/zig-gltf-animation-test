@@ -9,6 +9,7 @@ const Gui = @import("graphics/ui/dcimgui/Gui.zig");
 const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
+const Input = @import("io/Input.zig");
 
 pub const WindowData = extern struct {
     ui_generate_time: f32 = 0,
@@ -31,6 +32,7 @@ context: sdl3.video.gl.Context,
 renderer: Renderer,
 window_data: WindowData = .{},
 gui: Gui,
+input: Input,
 
 pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_width: usize, screen_height: usize) !Window {
     // Initialize SDL with subsystems you need here.
@@ -59,30 +61,45 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
     defer model.deinit(allocator);
     renderer.upload_data(model.mesh);
 
+    const input = try Input.init(allocator);
+
     return .{
         .window = window,
         .context = context,
         .renderer = renderer,
         .gui = gui,
+        .input = input,
     };
 }
 
-pub fn deinit(self: *Window) !void {
+pub fn deinit(self: *Window, allocator: std.mem.Allocator) !void {
     self.renderer.deinit();
     self.window.deinit();
     try self.context.deinit();
+    self.input.deinit(allocator);
 }
 
 pub fn swap(self: Window) !void {
     try sdl3.video.gl.swapWindow(self.window);
 }
 
+// TODO: probably need to rework this events might be interrupts
 pub fn event_handle(self: *Window, event: sdl3.events.Event) !void {
     _ = self.gui.event_handle(event);
     switch (event) {
         .key_down => {
             if (event.key_down.key) |keycode| {
-                self.event_keyboard(keycode);
+                if (SDLKeymap.get_event_from_sdl_keyboard(keycode)) |key| {
+                    self.input.handle_event_down(key);
+                    self.renderer.handle_event(key);
+                }
+            }
+        },
+        .key_up => {
+            if (event.key_up.key) |keycode| {
+                if (SDLKeymap.get_event_from_sdl_keyboard(keycode)) |key| {
+                    self.input.handle_event_up(key);
+                }
             }
         },
         .mouse_button_down => {
@@ -127,7 +144,7 @@ pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
 }
 
 pub fn main_loop(self: *Window, frame_capper: sdl3.extras.FramerateCapper(f32)) !void {
-    self.renderer.update(frame_capper);
+    self.renderer.update(frame_capper, self.input);
     self.renderer.draw();
 
     var gui_frame_timer: Timer = .{};

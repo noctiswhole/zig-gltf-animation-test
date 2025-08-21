@@ -26,7 +26,7 @@ pub fn init(
 ) !sdl3.AppResult {
     _ = args;
     var window = try Window.init(allocator, "Hello SDL", 640, 480);
-    errdefer window.deinit() catch {
+    errdefer window.deinit(allocator) catch {
         @panic("could not destroy window");
     };
     const frame_capper = sdl3.extras.FramerateCapper(f32){ .mode = .{ .unlimited = {} } };
@@ -66,7 +66,7 @@ pub fn quit(
 ) void {
     _ = result;
     if (app_state) |state| {
-        state.window.deinit() catch {
+        state.window.deinit(allocator) catch {
             @panic("Could not destroy window");
         };
         allocator.destroy(state);

@@ -4,10 +4,12 @@ const zalgebra = @import("zalgebra");
 const Vec3 = zalgebra.Vec3;
 const Mat4 = zalgebra.Mat4;
 const RenderData = data.RenderData;
+const Input = @import("../../io/Input.zig");
 const std = @import("std");
 const math = std.math;
 
 const WORLD_UP = Vec3.new(0, 1, 0);
+const MOVEMENT_SPEED: f32 = 10;
 
 // defaults
 const POSITION = Vec3.new(3, 3, 3);
@@ -22,6 +24,29 @@ up: Vec3 = UP,
 
 yaw: f32 = 0,
 pitch: f32 = 0,
+
+pub fn handle_input(self: *Camera, input: Input, delta_time: f32) void {
+    const velocity = Vec3.set(MOVEMENT_SPEED * delta_time);
+    if (input.is_pressed(.camera_forward)) {
+        self.position = self.position.add(self.front.mul(velocity));
+    }
+    if (input.is_pressed(.camera_backward)) {
+        self.position = self.position.sub(self.front.mul(velocity));
+    }
+    if (input.is_pressed(.camera_left)) {
+        self.position = self.position.sub(self.right.mul(velocity));
+    }
+    if (input.is_pressed(.camera_right)) {
+        self.position = self.position.add(self.right.mul(velocity));
+    }
+    if (input.is_pressed(.camera_down)) {
+        self.position = self.position.sub(self.up.mul(velocity));
+    }
+    if (input.is_pressed(.camera_up)) {
+        self.position = self.position.add(self.up.mul(velocity));
+    }
+
+}
 
 pub fn update_vectors(self: *Camera) void {
     const azimuth_radians: f32 = zalgebra.toRadians(self.yaw);

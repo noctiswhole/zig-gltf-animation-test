@@ -9,6 +9,12 @@ const StaticStringMap = std.StaticStringMap(InputEvent);
 const keymap = StaticStringMap.initComptime(.{
     .{ "space", .switch_shader },
     .{ "right", .camera_control },
+    .{ "w", .camera_forward},
+    .{ "s", .camera_backward},
+    .{ "d", .camera_right},
+    .{ "a", .camera_left},
+    .{ "q", .camera_down},
+    .{ "e", .camera_up},
 });
 
 pub fn get_event_from_sdl_keyboard(keyboard: sdl3.keycode.Keycode) ?InputEvent {

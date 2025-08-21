@@ -17,6 +17,7 @@ const Mat4 = zalgebra.Mat4;
 const Vec3 = zalgebra.Vec3;
 const Camera = @import("../3d/Camera.zig");
 const InputEvent = @import("../../io/InputMap.zig").InputEvent;
+const Input = @import("../../io/Input.zig");
 const math = std.math;
 const DEFAULT_FOV: f32 = 90;
 
@@ -93,10 +94,12 @@ pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
     gl.viewport(0, 0, @intCast(width), @intCast(height));
 }
 
-pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32)) void {
+pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32), input: Input) void {
     self.render_data.ticks = frame_capper.frame_num;
     self.render_data.frame_time = frame_capper.dt;
     self.render_data.fps = frame_capper.getObservedFps();
+
+    self.camera.handle_input(input, @as(f32, @floatFromInt(frame_capper.dt))/1000000000);
 
     self.camera.update_vectors();
 
