@@ -165,3 +165,9 @@ pub fn handle_event(self: *Renderer, event: InputEvent) void {
         }
     }
 }
+
+pub fn handle_event_mouse_motion(self: *Renderer, x_rel: f32, y_rel: f32) void {
+    self.render_data.view_azimuth += x_rel;
+    // SDL y direction is flipped
+    self.render_data.view_elevation -= y_rel;
+}

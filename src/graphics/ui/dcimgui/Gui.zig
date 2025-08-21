@@ -59,6 +59,9 @@ pub fn create_frame(_: *Gui, render_data: *RenderData, window_data: *WindowData)
     _ = c.ImGui_Separator();
     _ = c.ImGui_Text("Camera Control: %b", window_data.mouse_grab);
     _ = c.ImGui_Separator();
+    _ = c.ImGui_Text("View Azimuth: %f", render_data.view_azimuth);
+    _ = c.ImGui_Text("View Elevation: %f", render_data.view_elevation);
+    _ = c.ImGui_Separator();
     // Shader toggle button
     if (c.ImGui_Button("Toggle Shader")) {
         render_data.use_changed_shader = !render_data.use_changed_shader;

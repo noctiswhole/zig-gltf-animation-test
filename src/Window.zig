@@ -88,6 +88,9 @@ pub fn event_handle(self: *Window, event: sdl3.events.Event) !void {
         .mouse_button_down => {
             try self.event_mouse_button(event.mouse_button_down);
         },
+        .mouse_motion => {
+            self.event_mouse_motion(event.mouse_motion);
+        },
         else => {
 
         }
@@ -107,6 +110,12 @@ pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseBu
         }
         try self.window.setMouseGrab(self.window_data.mouse_grab);
         try sdl3.mouse.setWindowRelativeMode(self.window, self.window_data.mouse_grab);
+    }
+}
+
+pub fn event_mouse_motion(self: *Window, mouse_motion: sdl3.events.MouseMotion) void {
+    if (self.window_data.mouse_grab) {
+        self.renderer.handle_event_mouse_motion(mouse_motion.x_rel, mouse_motion.y_rel);
     }
 }
 
