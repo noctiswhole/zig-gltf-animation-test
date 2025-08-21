@@ -97,6 +97,8 @@ pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32)) v
     self.render_data.ticks = frame_capper.frame_num;
     self.render_data.frame_time = frame_capper.dt;
     self.render_data.fps = frame_capper.getObservedFps();
+
+    self.camera.update_vectors();
 }
 
 pub fn draw(self: *Renderer) void {
@@ -130,7 +132,7 @@ pub fn draw(self: *Renderer) void {
     {
         timer_ubo.start();
         defer timer_ubo.stop();
-        self.uniform_buffer.upload_data(self.camera.get_view_matrix(&self.render_data).mul(model), self.projection_matrix);
+        self.uniform_buffer.upload_data(self.camera.get_view_matrix().mul(model), self.projection_matrix);
     }
 
     {
@@ -167,22 +169,7 @@ pub fn handle_event(self: *Renderer, event: InputEvent) void {
 }
 
 pub fn handle_event_mouse_motion(self: *Renderer, x_rel: f32, y_rel: f32) void {
-    self.render_data.view_azimuth += x_rel;
     // SDL y direction is flipped
-    self.render_data.view_elevation -= y_rel;
+    self.camera.handle_event_mouse_motion(x_rel, -y_rel);
 
-    // constrain rotation
-    if (self.render_data.view_azimuth < 0) {
-        self.render_data.view_azimuth += 360;
-    }
-    if (self.render_data.view_azimuth > 360) {
-        self.render_data.view_azimuth -= 360;
-    }
-
-    if (self.render_data.view_elevation > 89) {
-        self.render_data.view_elevation = 89;
-    }
-    if (self.render_data.view_elevation < -89) {
-        self.render_data.view_elevation = -89;
-    }
 }
