@@ -42,7 +42,7 @@ pub fn build(b: *std.Build) void {
         .ext_image = true,
 
         // Options passed directly to https://github.com/castholm/SDL (SDL3 C Bindings):
-        .c_sdl_preferred_linkage = .dynamic,
+        .c_sdl_preferred_linkage = .static,
         // .c_sdl_strip = false,
         // .c_sdl_sanitize_c = .off,
         // .c_sdl_lto = .none,
