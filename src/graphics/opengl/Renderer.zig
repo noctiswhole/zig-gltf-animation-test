@@ -162,7 +162,7 @@ pub fn handle_event(self: *Renderer, event: InputEvent) void {
         },
         .camera_control => {
             self.render_data.camera_control = !self.render_data.camera_control;
-            Logger.log("Giving camera control");
+            Logger.log("Toggle camera control");
         },
         else => {
 

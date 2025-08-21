@@ -54,7 +54,7 @@ pub fn event(
             return .run;
         },
         else => {
-            app_state.window.event_handle(curr_event);
+            try app_state.window.event_handle(curr_event);
         },
     }
     return .run;

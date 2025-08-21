@@ -76,7 +76,7 @@ pub fn swap(self: Window) !void {
     try sdl3.video.gl.swapWindow(self.window);
 }
 
-pub fn event_handle(self: *Window, event: sdl3.events.Event) void {
+pub fn event_handle(self: *Window, event: sdl3.events.Event) !void {
     _ = self.gui.event_handle(event);
     switch (event) {
         .key_down => {
@@ -85,7 +85,7 @@ pub fn event_handle(self: *Window, event: sdl3.events.Event) void {
             }
         },
         .mouse_button_down => {
-            self.event_mouse_button(event.mouse_button_down);
+            try self.event_mouse_button(event.mouse_button_down);
         },
         else => {
 
@@ -99,9 +99,12 @@ pub fn event_window_resized(self: *Window) !void {
 }
 
 // TODO: move input to some sort of event system
-pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseButton) void {
+pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseButton) !void {
     if (SDLKeymap.get_event_from_sdl_mouse_button(mouse_button_event.button)) |event| {
         self.renderer.handle_event(event);
+        sdl3.mouse.capture(self.renderer.render_data.camera_control) catch {
+            // Wayland mouse capture not supported...
+        };
     }
 
 }

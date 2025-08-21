@@ -8,7 +8,7 @@ const StaticStringMap = std.StaticStringMap(InputEvent);
 // TODO: create mapping at runtime
 const keymap = StaticStringMap.initComptime(.{
     .{ "space", .switch_shader },
-    .{ "left", .camera_control },
+    .{ "right", .camera_control },
 });
 
 pub fn get_event_from_sdl_keyboard(keyboard: sdl3.keycode.Keycode) ?InputEvent {
