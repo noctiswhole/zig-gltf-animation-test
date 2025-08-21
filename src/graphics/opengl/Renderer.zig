@@ -99,6 +99,9 @@ pub fn update(self: *Renderer, frame_capper: sdl3.extras.FramerateCapper(f32)) v
     self.render_data.fps = frame_capper.getObservedFps();
 
     self.camera.update_vectors();
+
+    self.render_data.view_azimuth = self.camera.yaw;
+    self.render_data.view_elevation = self.camera.pitch;
 }
 
 pub fn draw(self: *Renderer) void {
