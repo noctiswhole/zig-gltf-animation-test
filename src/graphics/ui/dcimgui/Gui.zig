@@ -77,6 +77,9 @@ pub fn create_frame(_: *Gui, render_data: *RenderData, window_data: *WindowData)
     _ = c.ImGui_Text("Field of View: %f", render_data.field_of_view);
     // _ = c.ImGui_SliderInt("##FOV", &render_data.field_of_view, 40, 150);
      _ = c.ImGui_SliderFloat("##FOV", &render_data.field_of_view, 40, 150);
+    _ = c.ImGui_Separator();
+    _ = c.ImGui_Text("Mouse sensitivity: %f", window_data.mouse_sensitivity);
+     _ = c.ImGui_SliderFloat("##SENS", &window_data.mouse_sensitivity, 0, 1);
      _ = c.ImGui_End();
 
 }

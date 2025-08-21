@@ -15,6 +15,7 @@ pub const WindowData = extern struct {
     ui_generate_time: f32 = 0,
     ui_draw_time: f32 = 0,
     mouse_grab: bool = false,
+    mouse_sensitivity: f32 = 0.5,
 };
 
 const SDL_INIT_FLAGS = sdl3.InitFlags{
@@ -132,7 +133,7 @@ pub fn event_mouse_button(self: *Window, mouse_button_event: sdl3.events.MouseBu
 
 pub fn event_mouse_motion(self: *Window, mouse_motion: sdl3.events.MouseMotion) void {
     if (self.window_data.mouse_grab) {
-        self.renderer.handle_event_mouse_motion(mouse_motion.x_rel, mouse_motion.y_rel);
+        self.renderer.handle_event_mouse_motion(mouse_motion.x_rel * self.window_data.mouse_sensitivity, mouse_motion.y_rel * self.window_data.mouse_sensitivity);
     }
 }
 
@@ -145,6 +146,7 @@ pub fn event_keyboard(self: *Window, key_event: sdl3.keycode.Keycode) void {
 
 pub fn main_loop(self: *Window, frame_capper: sdl3.extras.FramerateCapper(f32)) !void {
     self.renderer.update(frame_capper, self.input);
+    // self.input.clear_events();
     self.renderer.draw();
 
     var gui_frame_timer: Timer = .{};

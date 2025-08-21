@@ -47,9 +47,10 @@ pub fn is_pressed(self: Input, input_enum: InputEnum) bool {
 }
 
 pub fn clear_events(self: *Input) void {
-    for (self.input.iterator().next()) | entry | {
-        entry.value_ptr.down = false;
-        entry.value_ptr.up = false;
+    for (self.input.valueIterator().next()) | entry | {
+        var edit_entry = entry;
+        edit_entry.value_ptr.down = false;
+        edit_entry.value_ptr.up = false;
     }
 }
 
@@ -57,7 +58,6 @@ pub fn handle_event_down(self: *Input, input_enum: InputEnum) void {
     if (self.input.getPtr(input_enum)) | event | {
         event.down = true;
         event.value = true;
-        std.debug.print("Pressed {s}", .{@tagName(input_enum)});
     }
 }
 
