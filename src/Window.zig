@@ -10,6 +10,9 @@ const sdl3 = @import("sdl3");
 const gl = @import("gl");
 const std = @import("std");
 const Input = @import("io/Input.zig");
+const SplineModel = @import("graphics/3d/SplineModel.zig");
+const zalgebra = @import("zalgebra");
+const Vec3 = zalgebra.Vec3;
 
 pub const WindowData = extern struct {
     ui_generate_time: f32 = 0,
@@ -56,11 +59,23 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
 
     try gl.load(context, getProcAddress);
     var renderer = try Renderer.init(allocator, 640, 480);
+    renderer = renderer;
 
     try sdl3.video.gl.setSwapInterval(.vsync);
     var model: Model = try Model.init(allocator);
     defer model.deinit(allocator);
-    renderer.upload_data(model.mesh);
+    // renderer.upload_data(model.mesh);
+
+
+    const  start_vert: Vec3 = Vec3.new(-4.0, 1.0, -2.0);
+    const  start_tan: Vec3 = Vec3.new(-10.0, -8.0, 8.0);
+    const  end_vert: Vec3 = Vec3.new(4.0, 2.0, -2.0);
+    const  end_tan: Vec3 = Vec3.new(-6.0, 5.0, -6.0);
+
+    var spline_model: SplineModel = try SplineModel.init(allocator, start_vert, start_tan, end_vert, end_tan, 25);
+    defer spline_model.deinit(allocator);
+    // renderer.upload_data(spline_model.mesh);
+
 
     const input = try Input.init(allocator);
 
@@ -74,7 +89,7 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
 }
 
 pub fn deinit(self: *Window, allocator: std.mem.Allocator) !void {
-    self.renderer.deinit();
+    self.renderer.deinit(allocator);
     self.window.deinit();
     try self.context.deinit();
     self.input.deinit(allocator);

@@ -72,6 +72,8 @@ pub fn create_frame(_: *Gui, render_data: *RenderData, window_data: *WindowData)
     } else {
         _ = c.ImGui_Text("Changed Shader");
     }
+    _ = c.ImGui_Text("Spline Position: %f", render_data.spline_position);
+    _ = c.ImGui_SliderFloat("##SPLINE", &render_data.spline_position, 0, 1);
 
     _ = c.ImGui_Separator();
     _ = c.ImGui_Text("Field of View: %f", render_data.field_of_view);

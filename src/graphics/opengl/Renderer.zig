@@ -7,6 +7,7 @@ const UniformBuffer = @import("UniformBuffer.zig");
 const Timer = @import("../../tools/Timer.zig");
 const data = @import("../3d/data.zig");
 const Mesh = data.Mesh;
+const Model = @import("../3d/Model.zig");
 const Logger = @import("../../io/Logger.zig").makeLogger("Renderer");
 const std = @import("std");
 const gl = @import("gl");
@@ -19,6 +20,8 @@ const Camera = @import("../3d/Camera.zig");
 const InputEvent = @import("../../io/InputMap.zig").InputEvent;
 const Input = @import("../../io/Input.zig");
 const math = std.math;
+const spline = @import("../../tools/spline.zig");
+const SplineModel = @import("../3d/SplineModel.zig");
 const DEFAULT_FOV: f32 = 90;
 
 framebuffer: Framebuffer,
@@ -30,7 +33,9 @@ uniform_buffer: UniformBuffer,
 is_shader_swap: bool = false,
 render_data: RenderData,
 projection_matrix: Mat4,
+temp_mesh: Mesh,
 camera: Camera = .{},
+model: Model,
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     const framebuffer = try Framebuffer.init(width, height);
@@ -46,6 +51,9 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     const shader_changed = try Shader.init(allocator, "resources/shaders/changed.vert", "resources/shaders/changed.frag");
     Logger.log("Shader2 initialized");
 
+    const mesh = try Mesh.initCapacity(allocator, 36);
+    const model: Model = try Model.init(allocator);
+
     const render_data: RenderData = .{
         .width = width,
         .height = height,
@@ -54,6 +62,8 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     };
     return .{
         .framebuffer = framebuffer,
+        .model = model,
+        .temp_mesh = mesh,
         .texture = texture,
         .shader = shader,
         .vertex_buffer = vertex_buffer,
@@ -64,12 +74,14 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     };
 }
 
-pub fn deinit(self: *Renderer) void {
+pub fn deinit(self: *Renderer, allocator: std.mem.Allocator) void {
     self.texture.deinit();
     self.uniform_buffer.deinit();
     self.shader.deinit();
     self.framebuffer.deinit();
     self.vertex_buffer.deinit();
+    self.model.deinit(allocator);
+    self.temp_mesh.deinit(allocator);
 }
 
 fn generate_projection_matrix(width: usize, height: usize, fov: f32) Mat4 {
@@ -78,8 +90,10 @@ fn generate_projection_matrix(width: usize, height: usize, fov: f32) Mat4 {
 }
 
 pub fn upload_data(self: *Renderer, mesh: Mesh) void {
+    // self.temp_mesh.clearRetainingCapacity();
+
     self.render_data.triangle_count = mesh.items.len / 3;
-    self.vertex_buffer.upload_data(mesh);
+    // self.vertex_buffer.upload_data(mesh);
 }
 
 pub fn set_size(self: *Renderer, width: usize, height: usize) !void {
@@ -113,24 +127,25 @@ pub fn draw(self: *Renderer) void {
     gl.clearColor(0.1, 0.1, 0.1, 1);
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.CULL_FACE);
+    gl.disable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
     var timer_matrix: Timer = .{};
     var timer_ubo: Timer = .{};
     var timer_draw: Timer = .{};
     var model: Mat4 = Mat4.identity();
+    model = model;
 
     {
         timer_matrix.start();
         defer timer_matrix.stop();
         self.projection_matrix = generate_projection_matrix(self.render_data.width, self.render_data.height, self.render_data.field_of_view);
-        const angle: f32 = @floatFromInt(self.render_data.ticks);
+        // const angle: f32 = @floatFromInt(self.render_data.ticks);
         if (self.render_data.use_changed_shader) {
-            model = model.rotate(angle, Vec3.new(0, 0, 1));
+            // model = model.rotate(angle, Vec3.new(0, 0, 1));
             self.shader_changed.use();
         } else {
-            model = model.rotate(-angle, Vec3.new(0, 0, 1));
+            // model = model.rotate(-angle, Vec3.new(0, 0, 1));
             self.shader.use();
         }
     }
@@ -146,6 +161,29 @@ pub fn draw(self: *Renderer) void {
         defer timer_draw.stop();
         self.texture.bind();
         defer self.texture.unbind();
+
+        self.temp_mesh.clearRetainingCapacity();
+        const start_vertex: Vec3 = Vec3.new(-4.0, 1.0, -2.0);
+        const start_tangent: Vec3 = Vec3.new(-10.0, -8.0, 8.0);
+        const end_vertex: Vec3 = Vec3.new(4.0, 2.0, -2.0);
+        const end_tangent: Vec3 = Vec3.new(-6.0, 5.0, -6.0);
+        const value = self.render_data.spline_position;
+        const interpolated_position = spline.hermite(start_vertex,
+            start_tangent, end_vertex, end_tangent, value);
+
+        for (self.model.mesh.items) |vertex| {
+            var vert = vertex;
+            vert.position = .{
+                vert.position[0] + interpolated_position.x(),
+                vert.position[1] + interpolated_position.y(),
+                vert.position[2] + interpolated_position.z(),
+            };
+            self.temp_mesh.appendAssumeCapacity(vert);
+        }
+
+        self.render_data.triangle_count = self.temp_mesh.items.len / 3;
+        self.vertex_buffer.upload_data(self.temp_mesh);
+
         self.vertex_buffer.bind();
         defer self.vertex_buffer.unbind();
 

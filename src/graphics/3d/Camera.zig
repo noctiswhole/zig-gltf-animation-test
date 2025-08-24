@@ -12,7 +12,7 @@ const WORLD_UP = Vec3.new(0, 1, 0);
 const MOVEMENT_SPEED: f32 = 10;
 
 // defaults
-const POSITION = Vec3.new(3, 3, 3);
+const POSITION = Vec3.new(-0.5, 3, 6);
 const FRONT = Vec3.new(0, 0, -1);
 const RIGHT = FRONT.cross(WORLD_UP).norm();
 const UP = RIGHT.cross(FRONT).norm();
