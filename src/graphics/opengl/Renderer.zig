@@ -36,6 +36,7 @@ projection_matrix: Mat4,
 temp_mesh: Mesh,
 camera: Camera = .{},
 model: Model,
+spline_model: SplineModel,
 
 pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer {
     const framebuffer = try Framebuffer.init(width, height);
@@ -51,8 +52,10 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
     const shader_changed = try Shader.init(allocator, "resources/shaders/changed.vert", "resources/shaders/changed.frag");
     Logger.log("Shader2 initialized");
 
-    const mesh = try Mesh.initCapacity(allocator, 36);
+    const mesh = try Mesh.initCapacity(allocator, 100);
     const model: Model = try Model.init(allocator);
+
+    const spline_model: SplineModel = try SplineModel.init(allocator, 25);
 
     const render_data: RenderData = .{
         .width = width,
@@ -71,6 +74,7 @@ pub fn init(allocator: std.mem.Allocator, width: usize, height: usize) !Renderer
         .shader_changed = shader_changed,
         .projection_matrix = generate_projection_matrix(width, height, DEFAULT_FOV),
         .render_data = render_data,
+        .spline_model = spline_model,
     };
 }
 
@@ -167,6 +171,13 @@ pub fn draw(self: *Renderer) void {
         const start_tangent: Vec3 = Vec3.new(-10.0, -8.0, 8.0);
         const end_vertex: Vec3 = Vec3.new(4.0, 2.0, -2.0);
         const end_tangent: Vec3 = Vec3.new(-6.0, 5.0, -6.0);
+
+        self.spline_model.update_spline(start_vertex, start_tangent, end_vertex, end_tangent);
+
+        for (self.spline_model.mesh.items) |vertex| {
+            self.temp_mesh.appendAssumeCapacity(vertex);
+        }
+
         const value = self.render_data.spline_position;
         const interpolated_position = spline.hermite(start_vertex,
             start_tangent, end_vertex, end_tangent, value);
@@ -187,7 +198,9 @@ pub fn draw(self: *Renderer) void {
         self.vertex_buffer.bind();
         defer self.vertex_buffer.unbind();
 
-        self.vertex_buffer.draw(gl.TRIANGLES, 0, self.render_data.triangle_count * 3);
+        self.vertex_buffer.draw(gl.LINES, 0, self.spline_model.num_spline_points * 2);
+
+        self.vertex_buffer.draw(gl.TRIANGLES, self.spline_model.num_spline_points * 2, self.render_data.triangle_count * 3);
 
         self.framebuffer.draw_to_screen();
     }

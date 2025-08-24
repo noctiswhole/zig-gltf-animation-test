@@ -67,12 +67,7 @@ pub fn init(allocator: std.mem.Allocator, window_title: [:0]const u8, screen_wid
     // renderer.upload_data(model.mesh);
 
 
-    const  start_vert: Vec3 = Vec3.new(-4.0, 1.0, -2.0);
-    const  start_tan: Vec3 = Vec3.new(-10.0, -8.0, 8.0);
-    const  end_vert: Vec3 = Vec3.new(4.0, 2.0, -2.0);
-    const  end_tan: Vec3 = Vec3.new(-6.0, 5.0, -6.0);
-
-    var spline_model: SplineModel = try SplineModel.init(allocator, start_vert, start_tan, end_vert, end_tan, 25);
+    var spline_model: SplineModel = try SplineModel.init(allocator, 25);
     defer spline_model.deinit(allocator);
     // renderer.upload_data(spline_model.mesh);
 
