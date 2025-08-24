@@ -178,6 +178,7 @@ pub fn draw(self: *Renderer) void {
             self.temp_mesh.appendAssumeCapacity(vertex);
         }
 
+        // TODO: Maintain separate VBO for splines
         const value = self.render_data.spline_position;
         const interpolated_position = spline.hermite(start_vertex,
             start_tangent, end_vertex, end_tangent, value);
