@@ -70,8 +70,8 @@ pub fn build(b: *std.Build) void {
         .root_source_file = .{ .cwd_relative = "vendor/gl/gl4_6.zig"}
     }));
 
-    const zstbi = b.dependency("zstbi", .{});
-    exe.root_module.addImport("zstbi", zstbi.module("root"));
+    // const zstbi = b.dependency("zstbi", .{});
+    // exe.root_module.addImport("zstbi", zstbi.module("root"));
 
     const zgltf = b.dependency("zgltf", .{});
     exe.root_module.addImport("zgltf", zgltf.module("zgltf"));
