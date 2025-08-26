@@ -40,10 +40,10 @@
             .url = "git+https://github.com/Gota7/zig-sdl3?ref=v0.1.1#694ffacd7c2c0b83aaa7a9bb1e279d7b39ea9aee",
             .hash = "sdl3-0.1.1-NmT1QwTgIADixpCS2g5pBBON5AEfnjOox94dU0dtT-tq",
         },
-        // .zstbi = .{
-        //     .url = "git+https://github.com/zig-gamedev/zstbi#a70604a93988ee553d0ae6a3871726270a6025d5",
-        //     .hash = "zstbi-0.11.0-dev-L0Ea_9WVBwAO8t0Qbr87vnCEf1QBcNQHbV-O_D0UWYqT",
-        // },
+        .zstbi = .{
+            .url = "git+https://github.com/simeks/zstbi#57b82a3dbcd78046c851983b19ff94d42e9aaf08",
+            .hash = "zstbi-0.11.0-dev-L0Ea_yaWBwAHwFoCuyjkFyaiSsbjt4UOrkntR0c_nmzz",
+        },
         .zgltf = .{
             .url = "git+https://github.com/kooparse/zgltf#6ced8c4d45a22bbddfad5162be5f316e82a758ac",
             .hash = "zgltf-0.1.0-sX6QAn0XAgC-WDxqKJdbNxhKr7sunkvzB2wccl5QsuDs",
