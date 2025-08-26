@@ -145,13 +145,6 @@ pub fn draw(self: *Renderer) void {
         defer timer_matrix.stop();
         self.projection_matrix = generate_projection_matrix(self.render_data.width, self.render_data.height, self.render_data.field_of_view);
         // const angle: f32 = @floatFromInt(self.render_data.ticks);
-        if (self.render_data.use_changed_shader) {
-            // model = model.rotate(angle, Vec3.new(0, 0, 1));
-            self.shader_changed.use();
-        } else {
-            // model = model.rotate(-angle, Vec3.new(0, 0, 1));
-            self.shader.use();
-        }
     }
 
     {
@@ -198,9 +191,10 @@ pub fn draw(self: *Renderer) void {
 
         self.vertex_buffer.bind();
         defer self.vertex_buffer.unbind();
-
+        self.shader_changed.use();
         self.vertex_buffer.draw(gl.LINES, 0, self.spline_model.num_spline_points * 2);
 
+        self.shader.use();
         self.vertex_buffer.draw(gl.TRIANGLES, self.spline_model.num_spline_points * 2, self.render_data.triangle_count * 3);
 
         self.framebuffer.draw_to_screen();
