@@ -37,24 +37,24 @@
     // internet connectivity.
     .dependencies = .{
         .sdl3 = .{
-            .url = "git+https://github.com/Gota7/zig-sdl3?ref=v0.1.0#2d11d7a368871c64e7b95ef8f3d3a37a83dd2738",
-            .hash = "sdl3-0.0.1-NmT1Q_naIABvvZqajxpOI6ZhIMyAuRjf6CBO5Rpj356w",
+            .url = "git+https://github.com/Gota7/zig-sdl3?ref=v0.1.1#694ffacd7c2c0b83aaa7a9bb1e279d7b39ea9aee",
+            .hash = "sdl3-0.1.1-NmT1QwTgIADixpCS2g5pBBON5AEfnjOox94dU0dtT-tq",
         },
-        .zstbi = .{
-            .url = "git+https://github.com/zig-gamedev/zstbi#a70604a93988ee553d0ae6a3871726270a6025d5",
-            .hash = "zstbi-0.11.0-dev-L0Ea_9WVBwAO8t0Qbr87vnCEf1QBcNQHbV-O_D0UWYqT",
-        },
+        // .zstbi = .{
+        //     .url = "git+https://github.com/zig-gamedev/zstbi#a70604a93988ee553d0ae6a3871726270a6025d5",
+        //     .hash = "zstbi-0.11.0-dev-L0Ea_9WVBwAO8t0Qbr87vnCEf1QBcNQHbV-O_D0UWYqT",
+        // },
         .zgltf = .{
-            .url = "git+https://github.com/kooparse/zgltf#9c82e04aa0ff9418a29a588573b4aa5f83195fc6",
-            .hash = "zgltf-0.1.0-sX6QAt0TAgDvPeZcAjqLu4ANd3QSaOx3QDsssykcLYiC",
+            .url = "git+https://github.com/kooparse/zgltf#6ced8c4d45a22bbddfad5162be5f316e82a758ac",
+            .hash = "zgltf-0.1.0-sX6QAn0XAgC-WDxqKJdbNxhKr7sunkvzB2wccl5QsuDs",
         },
         .zalgebra = .{
-            .url = "git+https://github.com/kooparse/zalgebra#412c3e1cddcf6b8494a6c008dd152c6e0ec5e846",
-            .hash = "zalgebra-0.0.0-aaiVSk5nAQA4CIV_flm1iIpWiSrVcxggA9y_aaa-TtdR",
+            .url = "git+https://github.com/kooparse/zalgebra#e3c6792c938b01015e6358e335ed2ba4527736e9",
+            .hash = "zalgebra-0.0.0-aaiVSkRuAQBKWSVhmr3kxk6Y3EjLOKGk65osMLNYi02d",
         },
         .cimgui_zig = .{
-            .url = "git+https://github.com/tiawl/cimgui.zig#7613777415be737330272ad7bd9ed7d8ae2d82cd",
-            .hash = "cimgui_zig-1.0.0-2XubknimVQBmbXYhhAxOTaxKCpN6v49Nj9ArsfCmSBBE",
+            .url = "git+https://github.com/tiawl/cimgui.zig#92d1a337e8076da0ad2ace78a1388f86c65ed1f4",
+            .hash = "cimgui_zig-1.0.0-2XubkvSmVQArFfT8Mqf9NH63f9dbxEgUtnnX-9iJCCHN",
         },
     },
     .paths = .{
