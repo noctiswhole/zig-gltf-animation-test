@@ -15,7 +15,6 @@ pub fn init() VertexBuffer {
     // Don't know why this code doesn't work without binding vao
     gl.bindVertexArray(vao);
     gl.vertexArrayVertexBuffer(vao, 0, vbo, 0, @sizeOf(Vertex));
-    gl.bindVertexArray(0);
 
     gl.enableVertexArrayAttrib(vao, 0);
     gl.enableVertexArrayAttrib(vao, 1);
@@ -25,10 +24,11 @@ pub fn init() VertexBuffer {
     gl.vertexArrayAttribFormat(vao, 1, 3, gl.FLOAT, gl.FALSE, @offsetOf(Vertex, "color"));
     gl.vertexArrayAttribFormat(vao, 2, 2, gl.FLOAT, gl.FALSE, @offsetOf(Vertex, "uv"));
 
-
     gl.vertexArrayAttribBinding(vao, 0, 0);
     gl.vertexArrayAttribBinding(vao, 1, 0);
     gl.vertexArrayAttribBinding(vao, 2, 0);
+
+    gl.bindVertexArray(0);
 
 
     Logger.log("VAO and VBO initialized");
