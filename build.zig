@@ -31,6 +31,7 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "zig_animation",
         .root_module = exe_mod,
+        .use_llvm = true,
     });
 
     const sdl3 = b.dependency("sdl3", .{
