@@ -12,19 +12,24 @@ pub fn init() VertexBuffer {
     gl.genVertexArrays(1, &vao);
     var vbo: gl.GLuint = undefined;
     gl.genBuffers(1, &vbo);
+    // Don't know why this code doesn't work without binding vao
     gl.bindVertexArray(vao);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "position")));
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "color")));
-    gl.vertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, @sizeOf(Vertex), @ptrFromInt(@offsetOf(Vertex, "uv")));
-
-    gl.enableVertexAttribArray(0);
-    gl.enableVertexAttribArray(1);
-    gl.enableVertexAttribArray(2);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
+    gl.vertexArrayVertexBuffer(vao, 0, vbo, 0, @sizeOf(Vertex));
     gl.bindVertexArray(0);
+
+    gl.enableVertexArrayAttrib(vao, 0);
+    gl.enableVertexArrayAttrib(vao, 1);
+    gl.enableVertexArrayAttrib(vao, 2);
+
+    gl.vertexArrayAttribFormat(vao, 0, 3, gl.FLOAT, gl.FALSE, @offsetOf(Vertex, "position"));
+    gl.vertexArrayAttribFormat(vao, 1, 3, gl.FLOAT, gl.FALSE, @offsetOf(Vertex, "color"));
+    gl.vertexArrayAttribFormat(vao, 2, 2, gl.FLOAT, gl.FALSE, @offsetOf(Vertex, "uv"));
+
+
+    gl.vertexArrayAttribBinding(vao, 0, 0);
+    gl.vertexArrayAttribBinding(vao, 1, 0);
+    gl.vertexArrayAttribBinding(vao, 2, 0);
+
 
     Logger.log("VAO and VBO initialized");
 
